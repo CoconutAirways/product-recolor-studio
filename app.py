@@ -156,7 +156,7 @@ def build_recolor_prompt(
     extra_block = ""
     if extra.strip():
         extra_block = (
-            "\n\nADDITIONAL USER-SPECIFIED PRESERVATION RULES (these override any "
+            "\n\nADDITIONAL USER-SPECIFIED INSTRUCTIONS (these override any "
             "ambiguity — follow them exactly):\n"
             f"{extra.strip()}"
         )
@@ -411,50 +411,13 @@ if has_history:
     )
 active_idx = st.session_state.active_idx
 
-# Navigation row (only when there is at least one generation)
-if has_history:
-    nav_l, nav_c, nav_r = st.columns([1, 3, 1])
-    with nav_l:
-        if st.button(
-            "← Prev",
-            disabled=(active_idx == 0),
-            use_container_width=True,
-            key="nav_prev",
-        ):
-            st.session_state.active_idx = max(0, active_idx - 1)
-            st.rerun()
-    with nav_c:
-        cur = history[active_idx]
-        ts = datetime.fromtimestamp(cur["timestamp"]).strftime("%H:%M:%S")
-        st.markdown(
-            f"""
-            <div style="text-align:center;padding:6px 0;">
-              <strong style="font-size:15px;">{active_idx + 1} / {len(history)}</strong>
-              &nbsp;·&nbsp;
-              <span style="display:inline-block;width:14px;height:14px;
-                background:{cur['hex']};border-radius:3px;
-                border:1px solid rgba(255,255,255,0.25);
-                vertical-align:middle;margin-right:6px;"></span>
-              <strong>{cur['code']}</strong> · {cur['name']}
-              <span style="opacity:0.55;"> · {ts}</span>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-    with nav_r:
-        if st.button(
-            "Next →",
-            disabled=(active_idx >= len(history) - 1),
-            use_container_width=True,
-            key="nav_next",
-        ):
-            st.session_state.active_idx = min(len(history) - 1, active_idx + 1)
-            st.rerun()
-
 col_left, col_right = st.columns(2, gap="medium")
 
 with col_left:
-    st.markdown("**Original**")
+    st.markdown(
+        "<div style='padding:6px 0 4px 4px;font-size:13px;'><strong>Original</strong></div>",
+        unsafe_allow_html=True,
+    )
     # Priority: show the CURRENT upload if one is present (fresh uploads always
     # take precedence). Otherwise fall back to the active history entry's
     # original so navigation still makes sense when browsing past generations.
@@ -466,9 +429,47 @@ with col_left:
         st.info("Upload a product image to start.")
 
 with col_right:
-    st.markdown("**Recolored (4K)**")
     if has_history:
         cur = history[active_idx]
+        ts = datetime.fromtimestamp(cur["timestamp"]).strftime("%H:%M:%S")
+
+        # Compact nav: small left/right arrow buttons + left-aligned caption
+        nav_prev, nav_next, nav_caption = st.columns([1, 1, 10])
+        with nav_prev:
+            if st.button(
+                "←",
+                disabled=(active_idx == 0),
+                key="nav_prev",
+                use_container_width=True,
+            ):
+                st.session_state.active_idx = max(0, active_idx - 1)
+                st.rerun()
+        with nav_next:
+            if st.button(
+                "→",
+                disabled=(active_idx >= len(history) - 1),
+                key="nav_next",
+                use_container_width=True,
+            ):
+                st.session_state.active_idx = min(len(history) - 1, active_idx + 1)
+                st.rerun()
+        with nav_caption:
+            st.markdown(
+                f"""
+                <div style="padding:8px 0 0 4px;text-align:left;font-size:13px;line-height:1.3;">
+                  <strong>{active_idx + 1} / {len(history)}</strong>
+                  &nbsp;·&nbsp;
+                  <span style="display:inline-block;width:12px;height:12px;
+                    background:{cur['hex']};border-radius:2px;
+                    border:1px solid rgba(255,255,255,0.25);
+                    vertical-align:middle;margin-right:5px;"></span>
+                  <strong>{cur['code']}</strong> · {cur['name']}
+                  <span style="opacity:0.55;"> · {ts}</span>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
         st.image(cur["result_bytes"], width=PREVIEW_WIDTH)
         fname = (
             f"recolor_{cur['system']}_"
