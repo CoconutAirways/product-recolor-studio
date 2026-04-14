@@ -290,59 +290,83 @@ with st.sidebar:
 
     st.header("2 · Pantone Code")
 
-    search_raw = st.text_input(
-        "Search (code or name)",
-        placeholder="e.g. 18-1663  or  Tomato",
-        key=f"search_{system_key}",
-    )
-    search = (search_raw or "").strip().lower()
-
     all_codes = sorted(lookup.keys())
-    if search:
-        filtered = [
-            c for c in all_codes
-            if search in c.lower() or search in lookup[c]["name"].lower()
-        ]
+    state_key = f"pantone_input_{system_key}"
+    if state_key not in st.session_state:
+        st.session_state[state_key] = all_codes[0] if all_codes else ""
+
+    # Native text_input — supports cursor select, backspace, copy/paste
+    pantone_input = st.text_input(
+        "Type Pantone code or name",
+        key=state_key,
+        placeholder="e.g. 18-1663  or  Tomato",
+        help="Type the exact code or part of a name. Select with cursor, "
+             "backspace to clear, Cmd/Ctrl-C to copy.",
+    )
+    q = (pantone_input or "").strip()
+
+    def _resolve(q: str) -> Optional[str]:
+        if not q:
+            return None
+        q_up = q.upper()
+        # 1. exact code match
+        if q_up in lookup:
+            return q_up
+        # 2. code starts-with
+        for c in all_codes:
+            if c.startswith(q_up):
+                return c
+        # 3. code contains
+        for c in all_codes:
+            if q_up in c:
+                return c
+        # 4. name contains (case-insensitive)
+        q_low = q.lower()
+        for c in all_codes:
+            if q_low in lookup[c]["name"].lower():
+                return c
+        return None
+
+    resolved = _resolve(q)
+
+    if resolved:
+        code = resolved
+        entry = lookup[code]
+        name = entry["name"]
+        hex_code = entry["hex"]
+        # Small confirmation of what was matched (only useful when fuzzy)
+        if code != q.upper():
+            st.markdown(
+                f"<div style='font-size:12px;opacity:0.75;padding:2px 0 6px 2px;'>"
+                f"→ matched <strong>{code}</strong> · {name}</div>",
+                unsafe_allow_html=True,
+            )
     else:
-        filtered = all_codes
+        code = None
+        name = None
+        hex_code = None
+        st.warning(f"No {system_key} match for '{q}'")
 
-    if not filtered:
-        st.warning("No matches — showing full list.")
-        filtered = all_codes
-
-    def _label(c: str) -> str:
-        return f"{c} · {lookup[c]['name']}"
-
-    code = st.selectbox(
-        f"{len(filtered)} / {len(all_codes)} {system_key} codes",
-        filtered,
-        index=0,
-        format_func=_label,
-        key=f"pantone_select_{system_key}_{len(filtered)}",
-    )
-    entry = lookup[code]
-    name = entry["name"]
-    hex_code = entry["hex"]
-
-    st.markdown("**Preview**")
-    st.markdown(
-        f"""
-        <div style="
-            width:100%;
-            height:80px;
-            background:{hex_code};
-            border-radius:10px;
-            border:1px solid rgba(0,0,0,0.15);
-            box-shadow:0 1px 3px rgba(0,0,0,0.08);
-        "></div>
-        <div style="margin-top:10px;font-size:13px;line-height:1.5;">
-            <strong>{code}</strong><br/>
-            {name}<br/>
-            <code>{hex_code}</code>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    if hex_code:
+        st.markdown("**Preview**")
+        st.markdown(
+            f"""
+            <div style="
+                width:100%;
+                height:80px;
+                background:{hex_code};
+                border-radius:10px;
+                border:1px solid rgba(0,0,0,0.15);
+                box-shadow:0 1px 3px rgba(0,0,0,0.08);
+            "></div>
+            <div style="margin-top:10px;font-size:13px;line-height:1.5;">
+                <strong>{code}</strong><br/>
+                {name}<br/>
+                <code>{hex_code}</code>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
     st.divider()
     st.markdown("**Backend status**")
@@ -411,13 +435,28 @@ if has_history:
     )
 active_idx = st.session_state.active_idx
 
+PETROL_BOX = (
+    "<div style=\""
+    "background:#1A535C;"
+    "color:#FFFFFF;"
+    "padding:14px 18px;"
+    "border-radius:6px;"
+    "font-size:14px;"
+    "height:48px;"
+    "display:flex;"
+    "align-items:center;"
+    "box-sizing:border-box;"
+    "\">{text}</div>"
+)
+
+LABEL_ROW = (
+    "<div style='padding:6px 0 4px 4px;font-size:13px;'><strong>{text}</strong></div>"
+)
+
 col_left, col_right = st.columns(2, gap="medium")
 
 with col_left:
-    st.markdown(
-        "<div style='padding:6px 0 4px 4px;font-size:13px;'><strong>Original</strong></div>",
-        unsafe_allow_html=True,
-    )
+    st.markdown(LABEL_ROW.format(text="Original"), unsafe_allow_html=True)
     # Priority: show the CURRENT upload if one is present (fresh uploads always
     # take precedence). Otherwise fall back to the active history entry's
     # original so navigation still makes sense when browsing past generations.
@@ -426,10 +465,20 @@ with col_left:
     elif has_history:
         st.image(history[active_idx]["original_bytes"], width=PREVIEW_WIDTH)
     else:
-        st.info("Upload a product image to start.")
+        st.markdown(
+            PETROL_BOX.format(text="Upload a product image to start."),
+            unsafe_allow_html=True,
+        )
 
 with col_right:
-    if has_history:
+    if not has_history:
+        # Matching label row so both petrol bars line up vertically with the left column
+        st.markdown(LABEL_ROW.format(text="Result"), unsafe_allow_html=True)
+        st.markdown(
+            PETROL_BOX.format(text="Pick a Pantone and click Generate."),
+            unsafe_allow_html=True,
+        )
+    else:
         cur = history[active_idx]
         ts = datetime.fromtimestamp(cur["timestamp"]).strftime("%H:%M:%S")
 
@@ -494,18 +543,23 @@ with col_right:
                 st.session_state.history.pop(active_idx)
                 st.session_state.active_idx = max(0, active_idx - 1)
                 st.rerun()
-    else:
-        st.info("Pick a Pantone and click Generate.")
 
 st.divider()
 
 # ---------------------------------------------------------------------------
 # Generate button
 # ---------------------------------------------------------------------------
-ready = bool(upload and FREEPIK_API_KEY and R2 is not None)
+ready = bool(
+    upload and FREEPIK_API_KEY and R2 is not None and code is not None
+)
 aspect_label = detect_aspect_ratio(*original.size) if original is not None else "—"
+button_label = (
+    f"Generate → {code} {name}  ·  {aspect_label}  ·  4K"
+    if code is not None
+    else "Generate → (enter a valid Pantone)"
+)
 generate = st.button(
-    f"Generate → {code} {name}  ·  {aspect_label}  ·  4K",
+    button_label,
     type="primary",
     use_container_width=True,
     disabled=not ready,
