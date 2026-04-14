@@ -21,11 +21,11 @@ import base64
 import io
 import os
 import time
+from datetime import datetime
 from typing import Optional
 
 import requests
 import streamlit as st
-import streamlit.components.v1 as components
 from PIL import Image
 
 from pantone_data import PANTONE_TCX, PANTONE_PMS
@@ -35,10 +35,30 @@ from r2_client import from_secrets as build_r2_from_secrets
 # Config
 # ---------------------------------------------------------------------------
 NANO_BANANA_PRO_ENDPOINT = "https://api.freepik.com/v1/ai/text-to-image/nano-banana-pro"
-ASPECT_RATIO = "1:1"      # hardcoded — square only
-RESOLUTION = "4K"         # hardcoded — 4096×4096 native
+RESOLUTION = "4K"         # hardcoded — 4096 long edge
 POLL_INTERVAL_S = 3
 POLL_TIMEOUT_S = 360      # Pro can take 60–180s
+
+# Aspect ratio is auto-detected from the source so the original is never cropped.
+ASPECT_RATIO_PRESETS = {
+    "1:1": 1.0,
+    "4:3": 4 / 3,
+    "3:4": 3 / 4,
+    "16:9": 16 / 9,
+    "9:16": 9 / 16,
+    "3:2": 3 / 2,
+    "2:3": 2 / 3,
+}
+
+
+def detect_aspect_ratio(w: int, h: int) -> str:
+    """Return the closest supported Freepik aspect ratio preset."""
+    ratio = w / h
+    return min(ASPECT_RATIO_PRESETS.items(), key=lambda kv: abs(kv[1] - ratio))[0]
+
+# Display sizes (pixels) — keeps the UI tight, not full-width
+PREVIEW_WIDTH = 460
+HISTORY_THUMB_WIDTH = 260
 
 
 def _secret(name: str, default: str = "") -> str:
@@ -53,7 +73,6 @@ def _secret(name: str, default: str = "") -> str:
 
 
 def _secrets_map() -> dict:
-    """Build a plain dict of the secrets our helpers expect."""
     keys = [
         "FREEPIK_API_KEY",
         "R2_ACCOUNT_ID",
@@ -75,20 +94,18 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------------------------
+# Session state — persistent history
+# ---------------------------------------------------------------------------
+if "history" not in st.session_state:
+    st.session_state.history = []  # list[dict]: {timestamp, code, name, hex, system, original_bytes, result_bytes}
+
+
+# ---------------------------------------------------------------------------
 # Image helpers
 # ---------------------------------------------------------------------------
 def hex_to_rgb(hex_str: str) -> tuple:
     hex_str = hex_str.lstrip("#")
     return tuple(int(hex_str[i:i + 2], 16) for i in (0, 2, 4))
-
-
-def center_crop_square(img: Image.Image) -> Image.Image:
-    """Crop to a centered square — Nano Banana Pro 1:1 expects square input."""
-    w, h = img.size
-    side = min(w, h)
-    left = (w - side) // 2
-    top = (h - side) // 2
-    return img.crop((left, top, left + side, top + side))
 
 
 def image_to_jpeg_bytes(img: Image.Image, quality: int = 92) -> bytes:
@@ -118,6 +135,8 @@ def build_recolor_prompt(name: str, hex_code: str, system: str, code: str) -> st
         "exact same camera angle, focal length, perspective, framing, composition; "
         "exact same background, floor, props, mannequin, model, skin, hair, accessories. "
         "\n\nThe ONLY change is the base color of the main product surface. "
+        "Preserve the full product — do not crop, zoom, re-frame, or cut off any part "
+        "of the product. Keep the same framing and whitespace as the reference. "
         "Photorealistic studio product photography, 4K sharpness, crisp micro-detail, "
         "zero artistic reinterpretation, zero re-styling, zero re-lighting, zero re-cropping."
     )
@@ -126,7 +145,12 @@ def build_recolor_prompt(name: str, hex_code: str, system: str, code: str) -> st
 # ---------------------------------------------------------------------------
 # Freepik API — submit + poll
 # ---------------------------------------------------------------------------
-def submit_nano_banana_pro(prompt: str, reference_url: str, api_key: str) -> dict:
+def submit_nano_banana_pro(
+    prompt: str,
+    reference_url: str,
+    api_key: str,
+    aspect_ratio: str,
+) -> dict:
     headers = {
         "x-freepik-api-key": api_key,
         "Content-Type": "application/json",
@@ -136,18 +160,14 @@ def submit_nano_banana_pro(prompt: str, reference_url: str, api_key: str) -> dic
         "reference_images": [
             {"image": reference_url, "mime_type": "image/jpeg"},
         ],
-        "aspect_ratio": ASPECT_RATIO,
+        "aspect_ratio": aspect_ratio,
         "resolution": RESOLUTION,
     }
     resp = requests.post(NANO_BANANA_PRO_ENDPOINT, json=payload, headers=headers, timeout=60)
-    return {
-        "status_code": resp.status_code,
-        "body": _safe_json(resp),
-    }
+    return {"status_code": resp.status_code, "body": _safe_json(resp)}
 
 
 def poll_task(task_id: str, api_key: str) -> dict:
-    """Poll until COMPLETED/FAILED or timeout."""
     url = f"{NANO_BANANA_PRO_ENDPOINT}/{task_id}"
     headers = {"x-freepik-api-key": api_key}
     t0 = time.time()
@@ -174,7 +194,6 @@ def _safe_json(resp: requests.Response) -> dict:
 
 
 def extract_image_url(body: dict) -> Optional[str]:
-    """Pull the first generated image URL/base64 from a completed response."""
     if not isinstance(body, dict):
         return None
     data = body.get("data") or {}
@@ -203,35 +222,17 @@ def fetch_bytes(url_or_b64: str) -> bytes:
 
 
 # ---------------------------------------------------------------------------
-# Auto-download (triggered once per generation)
-# ---------------------------------------------------------------------------
-def trigger_auto_download(img_bytes: bytes, filename: str):
-    b64 = base64.b64encode(img_bytes).decode("ascii")
-    components.html(
-        f"""
-        <a id="auto-dl"
-           href="data:image/png;base64,{b64}"
-           download="{filename}"
-           style="display:none;">dl</a>
-        <script>
-          setTimeout(function() {{
-            document.getElementById('auto-dl').click();
-          }}, 200);
-        </script>
-        """,
-        height=0,
-    )
-
-
-# ---------------------------------------------------------------------------
-# UI — Sidebar
+# UI — Header
 # ---------------------------------------------------------------------------
 st.title("Product Recolor Studio")
 st.caption(
     "E-commerce product recoloring · Freepik Nano Banana Pro · "
-    f"{ASPECT_RATIO} · {RESOLUTION}"
+    f"original aspect · {RESOLUTION}"
 )
 
+# ---------------------------------------------------------------------------
+# UI — Sidebar
+# ---------------------------------------------------------------------------
 with st.sidebar:
     st.header("1 · Pantone System")
     system_label = st.selectbox(
@@ -243,11 +244,37 @@ with st.sidebar:
     lookup = PANTONE_TCX if system_key == "TCX" else PANTONE_PMS
 
     st.header("2 · Pantone Code")
-    codes = sorted(lookup.keys())
+
+    # --- Search / filter text input -----------------------------------------
+    search = st.text_input(
+        "Search (code or name)",
+        value="",
+        placeholder="e.g. 18-1663  or  Tomato",
+        key=f"search_{system_key}",
+    ).strip().lower()
+
+    all_codes = sorted(lookup.keys())
+    if search:
+        filtered = [
+            c for c in all_codes
+            if search in c.lower() or search in lookup[c]["name"].lower()
+        ]
+    else:
+        filtered = all_codes
+
+    if not filtered:
+        st.warning("No matches — showing full list.")
+        filtered = all_codes
+
+    # Show code + name in the dropdown so the native typeahead finds both
+    def _label(c: str) -> str:
+        return f"{c} · {lookup[c]['name']}"
+
     code = st.selectbox(
-        f"Choose from {len(codes)} {system_key} codes",
-        codes,
+        f"{len(filtered)} / {len(all_codes)} {system_key} codes",
+        filtered,
         index=0,
+        format_func=_label,
     )
     entry = lookup[code]
     name = entry["name"]
@@ -258,7 +285,7 @@ with st.sidebar:
         f"""
         <div style="
             width:100%;
-            height:90px;
+            height:80px;
             background:{hex_code};
             border-radius:10px;
             border:1px solid rgba(0,0,0,0.15);
@@ -284,10 +311,16 @@ with st.sidebar:
     else:
         st.error("R2 credentials missing")
 
+    st.divider()
+    if st.session_state.history:
+        if st.button(f"🗑 Clear history ({len(st.session_state.history)})"):
+            st.session_state.history = []
+            st.rerun()
+
 # ---------------------------------------------------------------------------
-# UI — Main
+# UI — Main (upload + latest result)
 # ---------------------------------------------------------------------------
-col_left, col_right = st.columns(2)
+col_left, col_right = st.columns(2, gap="large")
 
 with col_left:
     st.subheader("Original")
@@ -296,11 +329,14 @@ with col_left:
         type=["png", "jpg", "jpeg", "webp"],
     )
     original = None
-    cropped = None
     if upload:
         original = Image.open(upload).convert("RGB")
-        cropped = center_crop_square(original)
-        st.image(cropped, caption="Center-cropped to 1:1", use_container_width=True)
+        ow, oh = original.size
+        st.image(
+            original,
+            caption=f"{ow}×{oh}  ·  aspect {detect_aspect_ratio(ow, oh)} (auto)",
+            width=PREVIEW_WIDTH,
+        )
 
 with col_right:
     st.subheader("Recolored (4K)")
@@ -310,8 +346,9 @@ with col_right:
 st.divider()
 
 ready = bool(upload and FREEPIK_API_KEY and R2 is not None)
+aspect_label = detect_aspect_ratio(*original.size) if original is not None else "—"
 generate = st.button(
-    f"Generate → {code} {name}  ·  1:1  ·  4K",
+    f"Generate → {code} {name}  ·  {aspect_label}  ·  4K",
     type="primary",
     use_container_width=True,
     disabled=not ready,
@@ -320,24 +357,26 @@ generate = st.button(
 # ---------------------------------------------------------------------------
 # Generate flow
 # ---------------------------------------------------------------------------
-if generate and cropped is not None:
+if generate and original is not None:
     prompt = build_recolor_prompt(name, hex_code, system_key, code)
+    aspect_ratio = detect_aspect_ratio(*original.size)
 
     with st.expander("Prompt sent to Nano Banana Pro", expanded=False):
         st.code(prompt, language=None)
 
-    jpg_bytes = image_to_jpeg_bytes(cropped)
+    # Send the ORIGINAL at its native size — no crop, no pad, no resize.
+    jpg_bytes = image_to_jpeg_bytes(original)
 
     r2_key = None
     try:
-        # 1) Upload to R2
         with st.spinner("Uploading reference to R2…"):
             r2_key = R2.upload(jpg_bytes, mime="image/jpeg", suffix="jpg")
             ref_url = R2.presigned_get(r2_key, ttl_seconds=600)
 
-        # 2) Submit Nano Banana Pro task
         with st.spinner("Submitting Nano Banana Pro task…"):
-            submit = submit_nano_banana_pro(prompt, ref_url, FREEPIK_API_KEY)
+            submit = submit_nano_banana_pro(
+                prompt, ref_url, FREEPIK_API_KEY, aspect_ratio
+            )
 
         if submit["status_code"] not in (200, 201):
             st.error(f"Submit failed (HTTP {submit['status_code']})")
@@ -350,7 +389,6 @@ if generate and cropped is not None:
                 with st.expander("Raw response", expanded=True):
                     st.json(submit["body"])
             else:
-                # 3) Poll
                 t0 = time.time()
                 with st.spinner(
                     f"Generating {code} {name} at 4K… (task {task_id[:8]}…)"
@@ -375,7 +413,17 @@ if generate and cropped is not None:
                         except Exception as e:
                             st.error(f"Failed to fetch image: {e}")
                         else:
-                            result_slot.image(img_bytes, use_container_width=True)
+                            # Persist into history
+                            st.session_state.history.append({
+                                "timestamp": time.time(),
+                                "system": system_key,
+                                "code": code,
+                                "name": name,
+                                "hex": hex_code,
+                                "original_bytes": jpg_bytes,
+                                "result_bytes": img_bytes,
+                            })
+                            result_slot.image(img_bytes, width=PREVIEW_WIDTH)
                             filename = (
                                 f"recolor_{system_key}_"
                                 f"{code.replace(' ', '_').replace('/', '-')}_4K.png"
@@ -386,14 +434,69 @@ if generate and cropped is not None:
                                 file_name=filename,
                                 mime="image/png",
                                 use_container_width=True,
+                                key=f"dl_latest_{time.time()}",
                             )
-                            # Fire the browser download automatically
-                            trigger_auto_download(img_bytes, filename)
                             st.success(
-                                f"Done — {code} {name} · 1:1 · 4K · "
+                                f"Done — {code} {name} · {aspect_ratio} · 4K · "
                                 f"{len(img_bytes) // 1024} KB"
                             )
     finally:
-        # 4) Cleanup R2
         if r2_key and R2 is not None:
             R2.delete(r2_key)
+
+# ---------------------------------------------------------------------------
+# History timeline (persistent — downloads don't remove entries)
+# ---------------------------------------------------------------------------
+if st.session_state.history:
+    st.divider()
+    st.subheader(f"History · {len(st.session_state.history)} generation(s)")
+
+    for idx, item in enumerate(reversed(st.session_state.history)):
+        real_idx = len(st.session_state.history) - 1 - idx
+        ts = datetime.fromtimestamp(item["timestamp"]).strftime("%Y-%m-%d %H:%M:%S")
+        with st.container(border=True):
+            c1, c2, c3 = st.columns([1, 1, 1.2], gap="medium")
+            with c1:
+                st.caption("Original")
+                st.image(item["original_bytes"], width=HISTORY_THUMB_WIDTH)
+            with c2:
+                st.caption("Recolored (4K)")
+                st.image(item["result_bytes"], width=HISTORY_THUMB_WIDTH)
+            with c3:
+                st.markdown(
+                    f"""
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                      <div style="
+                        width:28px;height:28px;border-radius:6px;
+                        background:{item['hex']};
+                        border:1px solid rgba(0,0,0,0.2);
+                      "></div>
+                      <div style="font-size:15px;">
+                        <strong>{item['code']}</strong> · {item['name']}<br/>
+                        <code style="font-size:12px;">{item['hex']}</code>
+                        <span style="opacity:0.6;font-size:12px;"> · {item['system']}</span>
+                      </div>
+                    </div>
+                    <div style="opacity:0.6;font-size:12px;margin-bottom:10px;">{ts}</div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+                filename = (
+                    f"recolor_{item['system']}_"
+                    f"{item['code'].replace(' ', '_').replace('/', '-')}_4K.png"
+                )
+                st.download_button(
+                    label="⬇ Download 4K PNG",
+                    data=item["result_bytes"],
+                    file_name=filename,
+                    mime="image/png",
+                    use_container_width=True,
+                    key=f"dl_hist_{real_idx}",
+                )
+                if st.button(
+                    "✕ Remove",
+                    key=f"rm_hist_{real_idx}",
+                    use_container_width=True,
+                ):
+                    st.session_state.history.pop(real_idx)
+                    st.rerun()
