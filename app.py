@@ -142,16 +142,34 @@ st.markdown(
         max-width: 520px;
     }
 
-    /* Auto-width download button, horizontally centered in its column */
+    /* Auto-width download button, horizontally centered under image */
     [data-testid="stDownloadButton"] {
-        display: flex !important;
-        justify-content: center !important;
-        margin-top: 8px !important;
+        text-align: center !important;
+        margin-top: 10px !important;
+        width: 100% !important;
+        display: block !important;
     }
-    [data-testid="stDownloadButton"] > button {
+    [data-testid="stDownloadButton"] button {
+        display: inline-block !important;
         width: auto !important;
+        min-width: 0 !important;
         padding: 0.4rem 1.1rem !important;
         font-size: 13px !important;
+    }
+
+    /* Square nav buttons (← → ✕) — sit inside the 4-column nav row.
+       The :has() selector uniquely targets that row because it's the
+       only horizontal block on the page with a 4th column child. */
+    div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"]:nth-child(4)) button[kind="secondary"],
+    div[data-testid="stHorizontalBlock"]:has(> div[data-testid="column"]:nth-child(4)) button[kind="secondary"] {
+        height: 40px !important;
+        min-height: 40px !important;
+        width: 40px !important;
+        min-width: 40px !important;
+        aspect-ratio: 1 / 1 !important;
+        padding: 0 !important;
+        font-size: 16px !important;
+        line-height: 1 !important;
     }
     </style>
     """,
@@ -416,13 +434,16 @@ with st.sidebar:
             .forEach(el => {{ if (el.id !== LIST_ID) el.remove(); }});
 
           // 3. Attach the list attribute to the actual input element.
+          //    NOTE: we intentionally do NOT set autocomplete="off" —
+          //    Chrome suppresses the native datalist dropdown when
+          //    autocomplete is explicitly disabled on the input.
           function attach() {{
             const inp = parentDoc.querySelector(
               'input[aria-label="' + LABEL + '"]'
             );
             if (inp && inp.getAttribute('list') !== LIST_ID) {{
               inp.setAttribute('list', LIST_ID);
-              inp.setAttribute('autocomplete', 'off');
+              inp.removeAttribute('autocomplete');
             }}
           }}
           attach();
@@ -533,11 +554,22 @@ upload = st.file_uploader(
 )
 
 # Process upload: load original
+# NOTE: Streamlit's UploadedFile is a spooled file whose read pointer
+# is NOT auto-reset between script reruns. If the user triggers a rerun
+# (e.g. by pressing Enter in another widget), the pointer may still be
+# at EOF from the previous run, making Image.open() return empty. Seek
+# to 0 every time to guarantee a fresh read.
 original: Optional[Image.Image] = None
 original_bytes: Optional[bytes] = None
 if upload:
-    original = Image.open(upload).convert("RGB")
-    original_bytes = image_to_jpeg_bytes(original)
+    try:
+        upload.seek(0)
+        original = Image.open(upload).convert("RGB")
+        original_bytes = image_to_jpeg_bytes(original)
+    except Exception as e:
+        st.error(f"Could not read uploaded image: {e}")
+        original = None
+        original_bytes = None
 
 # ---------------------------------------------------------------------------
 # UI — Additional instructions (manual prompt append)
