@@ -91,6 +91,31 @@ st.set_page_config(
     layout="wide",
 )
 
+# Inject CSS — larger, friendlier file uploader drop zone
+st.markdown(
+    """
+    <style>
+    [data-testid="stFileUploader"] section,
+    [data-testid="stFileUploader"] > section,
+    [data-testid="stFileUploaderDropzone"] {
+        min-height: 180px !important;
+        padding: 2rem 1.5rem !important;
+        border-width: 2px !important;
+        border-style: dashed !important;
+    }
+    [data-testid="stFileUploader"] section > div:first-child,
+    [data-testid="stFileUploaderDropzone"] > div:first-child {
+        font-size: 1.05rem !important;
+    }
+    [data-testid="stFileUploader"] button {
+        padding: 0.55rem 1.25rem !important;
+        font-size: 1rem !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # ---------------------------------------------------------------------------
 # Session state
 # ---------------------------------------------------------------------------
@@ -265,12 +290,12 @@ with st.sidebar:
 
     st.header("2 · Pantone Code")
 
-    search = st.text_input(
+    search_raw = st.text_input(
         "Search (code or name)",
-        value="",
         placeholder="e.g. 18-1663  or  Tomato",
         key=f"search_{system_key}",
-    ).strip().lower()
+    )
+    search = (search_raw or "").strip().lower()
 
     all_codes = sorted(lookup.keys())
     if search:
@@ -293,6 +318,7 @@ with st.sidebar:
         filtered,
         index=0,
         format_func=_label,
+        key=f"pantone_select_{system_key}_{len(filtered)}",
     )
     entry = lookup[code]
     name = entry["name"]
@@ -337,16 +363,14 @@ with st.sidebar:
             st.rerun()
 
 # ---------------------------------------------------------------------------
-# UI — Upload (full width, but contained)
+# UI — Upload (full width)
 # ---------------------------------------------------------------------------
-upload_slot, _spacer = st.columns([2, 1])
-with upload_slot:
-    st.subheader("Upload")
-    upload = st.file_uploader(
-        "Product image (PNG / JPG / WEBP, max ~10 MB)",
-        type=["png", "jpg", "jpeg", "webp"],
-        label_visibility="collapsed",
-    )
+st.subheader("Upload")
+upload = st.file_uploader(
+    "Product image (PNG / JPG / WEBP, max ~10 MB)",
+    type=["png", "jpg", "jpeg", "webp"],
+    label_visibility="collapsed",
+)
 
 # Process upload: load original
 original: Optional[Image.Image] = None
@@ -361,18 +385,16 @@ if upload:
 st.markdown(
     "**Additional instructions** (optional) · appended to the recolor prompt"
 )
-instr_col, _ = st.columns([2, 1])
-with instr_col:
-    st.session_state.extra_instructions = st.text_area(
-        "extra",
-        value=st.session_state.extra_instructions,
-        height=90,
-        placeholder=(
-            "e.g. The white hood lining must stay white. The three white "
-            "side stripes must stay white. The drawstrings must stay white."
-        ),
-        label_visibility="collapsed",
-    )
+st.session_state.extra_instructions = st.text_area(
+    "extra",
+    value=st.session_state.extra_instructions,
+    height=90,
+    placeholder=(
+        "e.g. The white hood lining must stay white. The three white "
+        "side stripes must stay white. The drawstrings must stay white."
+    ),
+    label_visibility="collapsed",
+)
 
 # ---------------------------------------------------------------------------
 # UI — Gallery (prev/next + side-by-side pair)
@@ -433,10 +455,13 @@ col_left, col_right = st.columns(2, gap="medium")
 
 with col_left:
     st.markdown("**Original**")
-    if has_history:
-        st.image(history[active_idx]["original_bytes"], width=PREVIEW_WIDTH)
-    elif original is not None:
+    # Priority: show the CURRENT upload if one is present (fresh uploads always
+    # take precedence). Otherwise fall back to the active history entry's
+    # original so navigation still makes sense when browsing past generations.
+    if original is not None:
         st.image(original, width=PREVIEW_WIDTH)
+    elif has_history:
+        st.image(history[active_idx]["original_bytes"], width=PREVIEW_WIDTH)
     else:
         st.info("Upload a product image to start.")
 
