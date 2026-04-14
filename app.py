@@ -190,6 +190,11 @@ if "pending_task" not in st.session_state:
     # once and shows a banner. The user can click around freely — the
     # Freepik task keeps running on Freepik's servers regardless.
     st.session_state.pending_task = None
+if "upload_cache" not in st.session_state:
+    # Cached upload so it survives Streamlit reruns independently of
+    # the file_uploader widget's internal state. Shape:
+    # { "id": str, "bytes": bytes }
+    st.session_state.upload_cache = None
 
 
 # ---------------------------------------------------------------------------
@@ -553,18 +558,38 @@ upload = st.file_uploader(
     label_visibility="collapsed",
 )
 
-# Process upload: load original
-# NOTE: Streamlit's UploadedFile is a spooled file whose read pointer
-# is NOT auto-reset between script reruns. If the user triggers a rerun
-# (e.g. by pressing Enter in another widget), the pointer may still be
-# at EOF from the previous run, making Image.open() return empty. Seek
-# to 0 every time to guarantee a fresh read.
+# ---------------------------------------------------------------------------
+# Upload handling — cached via session_state so it survives every rerun
+# ---------------------------------------------------------------------------
+# Streamlit's UploadedFile object is unreliable across reruns triggered
+# by other widgets (e.g. pressing Enter in the Pantone text_input):
+# its internal read pointer can end up at EOF, making Image.open() return
+# an empty image and silently blanking the gallery. We sidestep this by
+# reading the raw bytes *once* when a new file is uploaded and storing
+# them in session_state. Every subsequent rerun decodes from that cache.
+if upload is not None:
+    upload_id = getattr(upload, "file_id", None) or f"{upload.name}:{upload.size}"
+    cached = st.session_state.upload_cache
+    if cached is None or cached.get("id") != upload_id:
+        try:
+            raw = upload.getvalue()  # does not move the pointer
+        except Exception:
+            try:
+                upload.seek(0)
+                raw = upload.read()
+            except Exception:
+                raw = b""
+        st.session_state.upload_cache = {"id": upload_id, "bytes": raw}
+else:
+    # User cleared the uploader → drop the cache
+    st.session_state.upload_cache = None
+
 original: Optional[Image.Image] = None
 original_bytes: Optional[bytes] = None
-if upload:
+if st.session_state.upload_cache and st.session_state.upload_cache.get("bytes"):
     try:
-        upload.seek(0)
-        original = Image.open(upload).convert("RGB")
+        raw = st.session_state.upload_cache["bytes"]
+        original = Image.open(io.BytesIO(raw)).convert("RGB")
         original_bytes = image_to_jpeg_bytes(original)
     except Exception as e:
         st.error(f"Could not read uploaded image: {e}")
