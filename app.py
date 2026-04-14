@@ -21,6 +21,7 @@ Secrets / env vars:
 from __future__ import annotations
 
 import base64
+import html as html_mod
 import io
 import os
 import time
@@ -30,6 +31,7 @@ from typing import Optional
 import requests
 import streamlit as st
 from PIL import Image
+from streamlit.components.v1 import html as components_html
 
 from pantone_data import PANTONE_TCX, PANTONE_PMS
 from r2_client import from_secrets as build_r2_from_secrets
@@ -321,10 +323,73 @@ with st.sidebar:
         "Type Pantone code or name",
         key=state_key,
         placeholder="e.g. 18-1663  or  Tomato",
-        help="Type the exact code or part of a name. Select with cursor, "
-             "backspace to clear, Cmd/Ctrl-C to copy.",
+        help="Click for full list, or type to filter. Native select / "
+             "backspace / copy-paste.",
     )
     q = (pantone_input or "").strip()
+
+    # ------------------------------------------------------------------
+    # Datalist injection: turn the text_input into a searchable combobox.
+    # We build a <datalist> in the parent document and attach its id to
+    # the real <input> element via a MutationObserver that survives
+    # Streamlit reruns. Full list opens on click; typing filters it
+    # natively; selecting / backspacing / copying all work because it's
+    # still a plain <input>.
+    # ------------------------------------------------------------------
+    options_html = "".join(
+        f'<option value="{html_mod.escape(c)}">'
+        f'{html_mod.escape(lookup[c]["name"])}</option>'
+        for c in all_codes
+    )
+    list_id = f"pantone-options-{system_key}"
+    input_label = "Type Pantone code or name"
+    components_html(
+        f"""
+        <script>
+        (function() {{
+          const parentDoc = window.parent.document;
+          const LIST_ID = "{list_id}";
+          const LABEL   = {repr(input_label)};
+
+          // 1. Ensure the datalist exists in the parent document and is current.
+          let dl = parentDoc.getElementById(LIST_ID);
+          if (!dl) {{
+            dl = parentDoc.createElement('datalist');
+            dl.id = LIST_ID;
+            parentDoc.body.appendChild(dl);
+          }}
+          dl.innerHTML = `{options_html}`;
+
+          // 2. Remove stale datalists from the other Pantone system so we
+          //    don't leak options across TCX/PMS switches.
+          parentDoc.querySelectorAll('datalist[id^="pantone-options-"]')
+            .forEach(el => {{ if (el.id !== LIST_ID) el.remove(); }});
+
+          // 3. Attach the list attribute to the actual input element.
+          function attach() {{
+            const inp = parentDoc.querySelector(
+              'input[aria-label="' + LABEL + '"]'
+            );
+            if (inp && inp.getAttribute('list') !== LIST_ID) {{
+              inp.setAttribute('list', LIST_ID);
+              inp.setAttribute('autocomplete', 'off');
+            }}
+          }}
+          attach();
+
+          // 4. Streamlit re-renders the input on every rerun — keep watching
+          //    the parent DOM and re-attach whenever it reappears.
+          if (!window.__pantoneObserver) {{
+            window.__pantoneObserver = new MutationObserver(attach);
+            window.__pantoneObserver.observe(parentDoc.body, {{
+              childList: true, subtree: true
+            }});
+          }}
+        }})();
+        </script>
+        """,
+        height=0,
+    )
 
     def _resolve(q: str) -> Optional[str]:
         if not q:
