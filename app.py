@@ -148,6 +148,11 @@ if "active_idx" not in st.session_state:
     st.session_state.active_idx = 0
 if "extra_instructions" not in st.session_state:
     st.session_state.extra_instructions = ""
+if "pending_task" not in st.session_state:
+    # Non-blocking generation state. While populated, every rerun polls
+    # once and shows a banner. The user can click around freely — the
+    # Freepik task keeps running on Freepik's servers regardless.
+    st.session_state.pending_task = None
 
 
 # ---------------------------------------------------------------------------
@@ -297,6 +302,32 @@ st.caption(
     "E-commerce product recoloring · Freepik Nano Banana Pro · "
     f"original aspect · {RESOLUTION}"
 )
+
+# Persistent "generating" banner — survives prev/next clicks
+if st.session_state.pending_task:
+    _pt = st.session_state.pending_task
+    _elapsed = int(time.time() - _pt["t0"])
+    st.markdown(
+        f"""
+        <div style="
+            background:#1A535C;
+            color:#FFFFFF;
+            padding:12px 18px;
+            border-radius:6px;
+            margin:8px 0 12px 0;
+            font-size:14px;
+            display:flex;
+            align-items:center;
+            gap:10px;
+        ">
+          <span style="font-size:16px;">⏳</span>
+          <span>Generating <strong>{_pt['code']} {_pt['name']}</strong>
+                · {_elapsed}s elapsed · you can browse older results while
+                this runs</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 # ---------------------------------------------------------------------------
 # UI — Sidebar
@@ -637,15 +668,21 @@ st.divider()
 # ---------------------------------------------------------------------------
 # Generate button
 # ---------------------------------------------------------------------------
+is_generating = st.session_state.pending_task is not None
 ready = bool(
-    upload and FREEPIK_API_KEY and R2 is not None and code is not None
+    upload
+    and FREEPIK_API_KEY
+    and R2 is not None
+    and code is not None
+    and not is_generating
 )
 aspect_label = detect_aspect_ratio(*original.size) if original is not None else "—"
-button_label = (
-    f"Generate → {code} {name}  ·  {aspect_label}  ·  4K"
-    if code is not None
-    else "Generate → (enter a valid Pantone)"
-)
+if is_generating:
+    button_label = "Generating… please wait"
+elif code is None:
+    button_label = "Generate → (enter a valid Pantone)"
+else:
+    button_label = f"Generate → {code} {name}  ·  {aspect_label}  ·  4K"
 generate = st.button(
     button_label,
     type="primary",
@@ -654,25 +691,19 @@ generate = st.button(
 )
 
 # ---------------------------------------------------------------------------
-# Generate flow
+# Generate flow — submit only, then hand off to the background poller
 # ---------------------------------------------------------------------------
-if generate and original is not None:
+if generate and original is not None and not is_generating:
     extra = st.session_state.extra_instructions or ""
     prompt = build_recolor_prompt(name, hex_code, system_key, code, extra)
     aspect_ratio = detect_aspect_ratio(*original.size)
-
-    with st.expander("Prompt sent to Nano Banana Pro", expanded=False):
-        st.code(prompt, language=None)
-
     jpg_bytes = original_bytes  # native size, no crop/pad/resize
 
     r2_key = None
     try:
-        with st.spinner("Uploading reference to R2…"):
+        with st.spinner("Submitting task…"):
             r2_key = R2.upload(jpg_bytes, mime="image/jpeg", suffix="jpg")
             ref_url = R2.presigned_get(r2_key, ttl_seconds=600)
-
-        with st.spinner("Submitting Nano Banana Pro task…"):
             submit = submit_nano_banana_pro(
                 prompt, ref_url, FREEPIK_API_KEY, aspect_ratio
             )
@@ -681,55 +712,110 @@ if generate and original is not None:
             st.error(f"Submit failed (HTTP {submit['status_code']})")
             with st.expander("Raw response", expanded=True):
                 st.json(submit["body"])
+            if r2_key and R2 is not None:
+                R2.delete(r2_key)
         else:
             task_id = ((submit["body"] or {}).get("data") or {}).get("task_id")
             if not task_id:
                 st.error("No task_id in submit response")
                 with st.expander("Raw response", expanded=True):
                     st.json(submit["body"])
+                if r2_key and R2 is not None:
+                    R2.delete(r2_key)
             else:
-                t0 = time.time()
-                with st.spinner(
-                    f"Generating {code} {name} at 4K… (task {task_id[:8]}…)"
-                ):
-                    final = poll_task(task_id, FREEPIK_API_KEY)
-                elapsed = time.time() - t0
-
-                if not final["ok"]:
-                    st.error(f"Task did not complete ({final.get('reason')})")
-                    with st.expander("Raw response", expanded=True):
-                        st.json(final["body"])
-                else:
-                    img_ref = extract_image_url(final["body"])
-                    if not img_ref:
-                        st.warning("Completed but no image URL in response.")
-                        with st.expander("Raw response", expanded=True):
-                            st.json(final["body"])
-                    else:
-                        try:
-                            img_bytes = fetch_bytes(img_ref)
-                        except Exception as e:
-                            st.error(f"Failed to fetch image: {e}")
-                        else:
-                            st.session_state.history.append({
-                                "timestamp": time.time(),
-                                "system": system_key,
-                                "code": code,
-                                "name": name,
-                                "hex": hex_code,
-                                "original_bytes": jpg_bytes,
-                                "result_bytes": img_bytes,
-                                "extra_instructions": extra,
-                                "elapsed_s": elapsed,
-                            })
-                            # Jump to the newest entry
-                            st.session_state.active_idx = len(st.session_state.history) - 1
-                            st.success(
-                                f"Done in {elapsed:.0f}s — "
-                                f"{code} {name} · {aspect_ratio} · 4K · "
-                                f"{len(img_bytes) // 1024} KB"
-                            )
-                            st.rerun()
-    finally:
+                # Store everything we need so the background poller can
+                # finish the job independently of any subsequent reruns.
+                st.session_state.pending_task = {
+                    "task_id": task_id,
+                    "r2_key": r2_key,
+                    "t0": time.time(),
+                    "system": system_key,
+                    "code": code,
+                    "name": name,
+                    "hex_code": hex_code,
+                    "original_bytes": jpg_bytes,
+                    "extra": extra,
+                    "aspect_ratio": aspect_ratio,
+                    "prompt": prompt,
+                }
+                st.rerun()
+    except Exception as e:
+        st.error(f"Submit error: {e}")
         if r2_key and R2 is not None:
-            R2.delete(r2_key)
+            try:
+                R2.delete(r2_key)
+            except Exception:
+                pass
+
+# ---------------------------------------------------------------------------
+# Background poller — runs once per rerun while a task is pending
+# ---------------------------------------------------------------------------
+if st.session_state.pending_task:
+    pt = st.session_state.pending_task
+    elapsed = time.time() - pt["t0"]
+
+    try:
+        resp = requests.get(
+            f"{NANO_BANANA_PRO_ENDPOINT}/{pt['task_id']}",
+            headers={"x-freepik-api-key": FREEPIK_API_KEY},
+            timeout=15,
+        )
+        body = _safe_json(resp)
+        data = (body or {}).get("data") or {}
+        status = (data.get("status") or "").upper()
+    except Exception:
+        status = "POLLING"
+        body = {}
+
+    if status in ("COMPLETED", "SUCCESS", "SUCCEEDED"):
+        img_ref = extract_image_url(body)
+        if img_ref:
+            try:
+                img_bytes = fetch_bytes(img_ref)
+                st.session_state.history.append({
+                    "timestamp": time.time(),
+                    "system": pt["system"],
+                    "code": pt["code"],
+                    "name": pt["name"],
+                    "hex": pt["hex_code"],
+                    "original_bytes": pt["original_bytes"],
+                    "result_bytes": img_bytes,
+                    "extra_instructions": pt["extra"],
+                    "elapsed_s": elapsed,
+                })
+                st.session_state.active_idx = len(st.session_state.history) - 1
+            except Exception as e:
+                st.error(f"Failed to fetch image: {e}")
+        else:
+            st.warning("Completed but no image URL in response.")
+        if pt.get("r2_key") and R2 is not None:
+            try:
+                R2.delete(pt["r2_key"])
+            except Exception:
+                pass
+        st.session_state.pending_task = None
+        st.rerun()
+    elif status in ("FAILED", "ERROR"):
+        st.error("Generation failed.")
+        if pt.get("r2_key") and R2 is not None:
+            try:
+                R2.delete(pt["r2_key"])
+            except Exception:
+                pass
+        st.session_state.pending_task = None
+    elif elapsed > POLL_TIMEOUT_S:
+        st.error(f"Generation timed out after {int(elapsed)}s.")
+        if pt.get("r2_key") and R2 is not None:
+            try:
+                R2.delete(pt["r2_key"])
+            except Exception:
+                pass
+        st.session_state.pending_task = None
+    else:
+        # Still running — wait a bit and rerun to poll again.
+        # If the user clicks anything during this sleep, Streamlit will
+        # interrupt and start a fresh rerun, which picks up the same
+        # pending_task from session_state and keeps polling. The Freepik
+        # task itself is completely unaffected by UI interactions.
+        time.sleep(POLL_INTERVAL_S)
+        st.rerun()
