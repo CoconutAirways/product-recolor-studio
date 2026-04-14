@@ -134,6 +134,25 @@ st.markdown(
         color: rgba(255,255,255,0.55) !important;
         opacity: 0.6 !important;
     }
+
+    /* Constrain gallery columns to image width so X and Download
+       sit flush with / under the 520px image. */
+    div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"],
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        max-width: 520px;
+    }
+
+    /* Auto-width download button, horizontally centered in its column */
+    [data-testid="stDownloadButton"] {
+        display: flex !important;
+        justify-content: center !important;
+        margin-top: 8px !important;
+    }
+    [data-testid="stDownloadButton"] > button {
+        width: auto !important;
+        padding: 0.4rem 1.1rem !important;
+        font-size: 13px !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -537,6 +556,16 @@ st.session_state.extra_instructions = st.text_area(
     label_visibility="collapsed",
 )
 
+# Live prompt preview — shows what will be sent to Nano Banana Pro
+# given the current Pantone selection + extra instructions.
+if code is not None and name is not None and hex_code is not None:
+    with st.expander("Prompt preview (click to expand)", expanded=False):
+        _preview = build_recolor_prompt(
+            name, hex_code, system_key, code,
+            st.session_state.extra_instructions or "",
+        )
+        st.code(_preview, language=None)
+
 # ---------------------------------------------------------------------------
 # UI — Gallery (prev/next + side-by-side pair)
 # ---------------------------------------------------------------------------
@@ -651,17 +680,15 @@ with col_right:
             f"recolor_{cur['system']}_"
             f"{cur['code'].replace(' ', '_').replace('/', '-')}_4K.png"
         )
-        # Small, centered download button under the image
-        dl_l, dl_c, dl_r = st.columns([2, 3, 2])
-        with dl_c:
-            st.download_button(
-                label="⬇ Download 4K PNG",
-                data=cur["result_bytes"],
-                file_name=fname,
-                mime="image/png",
-                use_container_width=True,
-                key=f"dl_active_{active_idx}_{cur['timestamp']}",
-            )
+        # Auto-width download button, horizontally centered via CSS
+        st.download_button(
+            label="⬇ Download 4K PNG",
+            data=cur["result_bytes"],
+            file_name=fname,
+            mime="image/png",
+            use_container_width=False,
+            key=f"dl_active_{active_idx}_{cur['timestamp']}",
+        )
 
 st.divider()
 
