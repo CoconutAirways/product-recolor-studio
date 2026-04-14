@@ -111,6 +111,27 @@ st.markdown(
         padding: 0.55rem 1.25rem !important;
         font-size: 1rem !important;
     }
+
+    /* Primary Generate button — petrol */
+    .stButton > button[kind="primary"],
+    button[data-testid="stBaseButton-primary"] {
+        background-color: #1A535C !important;
+        border-color: #1A535C !important;
+        color: #FFFFFF !important;
+    }
+    .stButton > button[kind="primary"]:hover,
+    button[data-testid="stBaseButton-primary"]:hover {
+        background-color: #144148 !important;
+        border-color: #144148 !important;
+        color: #FFFFFF !important;
+    }
+    .stButton > button[kind="primary"]:disabled,
+    button[data-testid="stBaseButton-primary"]:disabled {
+        background-color: #1A535C !important;
+        border-color: #1A535C !important;
+        color: rgba(255,255,255,0.55) !important;
+        opacity: 0.6 !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -482,8 +503,8 @@ with col_right:
         cur = history[active_idx]
         ts = datetime.fromtimestamp(cur["timestamp"]).strftime("%H:%M:%S")
 
-        # Compact nav: small left/right arrow buttons + left-aligned caption
-        nav_prev, nav_next, nav_caption = st.columns([1, 1, 10])
+        # Compact nav row: ← → · caption · X (flush right with image)
+        nav_prev, nav_next, nav_caption, nav_remove = st.columns([1, 1, 9, 1])
         with nav_prev:
             if st.button(
                 "←",
@@ -518,14 +539,25 @@ with col_right:
                 """,
                 unsafe_allow_html=True,
             )
+        with nav_remove:
+            if st.button(
+                "✕",
+                use_container_width=True,
+                key=f"rm_active_{active_idx}_{cur['timestamp']}",
+                help="Remove this generation",
+            ):
+                st.session_state.history.pop(active_idx)
+                st.session_state.active_idx = max(0, active_idx - 1)
+                st.rerun()
 
         st.image(cur["result_bytes"], width=PREVIEW_WIDTH)
         fname = (
             f"recolor_{cur['system']}_"
             f"{cur['code'].replace(' ', '_').replace('/', '-')}_4K.png"
         )
-        dl_col, rm_col = st.columns([3, 1])
-        with dl_col:
+        # Small, centered download button under the image
+        dl_l, dl_c, dl_r = st.columns([2, 3, 2])
+        with dl_c:
             st.download_button(
                 label="⬇ Download 4K PNG",
                 data=cur["result_bytes"],
@@ -534,15 +566,6 @@ with col_right:
                 use_container_width=True,
                 key=f"dl_active_{active_idx}_{cur['timestamp']}",
             )
-        with rm_col:
-            if st.button(
-                "✕ Remove",
-                use_container_width=True,
-                key=f"rm_active_{active_idx}_{cur['timestamp']}",
-            ):
-                st.session_state.history.pop(active_idx)
-                st.session_state.active_idx = max(0, active_idx - 1)
-                st.rerun()
 
 st.divider()
 
