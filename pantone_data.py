@@ -39,27 +39,526 @@ PANTONE_TCX = {
     "12-0304 TCX": {"name": "Vanilla Custard", "hex": "#F4E3C2"},
     "12-0713 TCX": {"name": "French Vanilla", "hex": "#EFD9A1"},
     "12-0815 TCX": {"name": "Banana Crepe", "hex": "#E7C886"},
-    "12-0910 TCX": {"name": "Tender YE-llow", "hex": "#F1DFA6"},
-    "12-0915 TTX": {"name": "Golden Haze", "hex": "#E4C17B"},
-    "13-0755U#¢²&æÖR#¢%&–×&÷6R–VÆÆ÷r"Â&†W‚#¢"4cdCSR'ÒÀ¢#2ÓsS‚D5‚#¢²&æÖR#¢$FæFVÆ–öâ"Â&†W‚#¢"4ddCC'ÒÀ¢#2ÓƒS’D5‚#¢²&æÖR#¢$7–&W"–VÆÆ÷r"Â&†W‚#¢"4ddC#2'ÒÀ¢#2Ó“3"D5‚#¢²&æÖR#¢$&ææ7&VÒ"Â&†W‚#¢"4c4C#t'ÒÀ¢#2Ó“CrEE‚#¢²&æÖR#¢%7–7’×W7F&B"Â&†W‚#¢"4C”$R'ÒÀ¢#BÓƒC‚EDU‚: {"name": "Mimosa", "hex": "#EFC050"},
-    "14-0851 TCX": {"name": "Vibrant YE-llow", "hex": "#FFD400"},
-    "14-0957 TTX": {"name": "Lemon Chrome", "hex": "#FCAF17"},
+    "12-0910 TCX": {"name": "Tender Yellow", "hex": "#F1DFA6"},
+    "12-0915 TCX": {"name": "Golden Haze", "hex": "#E4C17B"},
+    "13-0755 TCX": {"name": "Primrose Yellow", "hex": "#F6D155"},
+    "13-0758 TCX": {"name": "Dandelion", "hex": "#FFD400"},
+    "13-0859 TCX": {"name": "Cyber Yellow", "hex": "#FFD21C"},
+    "13-0932 TCX": {"name": "Banana Cream", "hex": "#F3D27A"},
+    "13-0947 TCX": {"name": "Spicy Mustard", "hex": "#D9A02E"},
+    "14-0848 TCX": {"name": "Mimosa", "hex": "#EFC050"},
+    "14-0851 TCX": {"name": "Vibrant Yellow", "hex": "#FFD400"},
+    "14-0957 TCX": {"name": "Lemon Chrome", "hex": "#FCAF17"},
     "15-0751 TCX": {"name": "Lemon Curry", "hex": "#C9A227"},
-    "15-0955EPÖˆÈ›˜[YHˆ“Z[™\˜[QK[İÈ‹š^ˆˆÑĞLHŸKˆŒMKLLLÖˆÈ›˜[YHˆ\\Ø[‰ÜÈÛÛ‹š^ˆˆÑPMHŸKˆŒM‹LMLˆÖˆÈ›˜[YHˆ‘ÛÛ[ˆÜXÙH‹š^ˆˆĞNŒHŸK‚ˆÈ™ZYÙ\ÈÈ[œÈÈ™]]˜[ÂˆŒL‹LLHÖˆÈ›˜[YHˆ[™ÛÜ˜H‹š^ˆˆÑÎPNŸKˆŒLËLŒÈÖˆÈ›˜[YHˆ“Ş\İ\ˆÜ˜^H‹š^ˆˆÑPÎŸKˆŒLËLLˆÈ›˜[YHˆÜ°êYHœ°îË0êYH‹š^ˆˆÑĞÍMHŸKˆŒLËLLMÖˆÈ›˜[YHˆš\ØÛİH‹š^ˆˆÑPMˆŸKˆŒLËLLNˆÈ›˜[YHˆ›XXÚYØ[™‹š^ˆˆÑNÑQHŸKˆŒLËLLLˆÖˆÈ›˜[YHˆÜ™X[H[ˆ‹š^ˆˆÑPNPˆŸKˆŒLËLLLÖˆÈ›˜[YHˆ“YH‹š^ˆˆÑŒNLHŸKˆŒMLLLMˆÖˆÈ›˜[YHˆ•[ˆ‹š^ˆˆÑÈŸKˆŒMLLLNÖˆÈ›˜[YHˆ[X™\ˆYÚ‹š^ˆˆĞÎNPÈŸKˆŒMLLŒLÈÖˆÈ›˜[YHˆ™ZYÙH‹š^ˆˆĞ‘QÑˆŸKˆŒMLLÌMˆÈ›˜[YHˆ“XXØY[ZXH‹š^ˆˆĞÍMNˆŸKˆŒMKLLŒMHˆÈ›˜[YHˆ[[Û™Y™ˆ‹š^ˆˆĞÎMÌŸKˆŒMKLLŒMÈÖˆÈ›˜[YHˆ•Ø\›HØ[™‹š^ˆˆĞÌNMÍˆŸKˆŒM‹LLÌÍÖˆÈ›˜[YHˆ•]ÛHš\˜Ú‹š^ˆˆĞŒMŸKˆŒM‹LLÍHVèì‰¹…µ”ˆè€‰M…¹‘ÍÑ½¹”ˆ°€‰¡•àˆè€ˆÀáÙ‰ô°(€€€€ˆÄØ´ÄĞÌäQQ`ˆèì‰¹…µ”ˆè€‰ÁÉ¥½Ğ	Õ™˜ˆ°€‰¡•àˆè€ˆÌäĞÜØ‰ô°(€€€€ˆÄÜ´ÄÀĞÔQQ`ˆèì‰¹…µ”ˆè€‰µ‰•È½±ˆ°€‰¡•àˆè€ˆàİĞÜ‰ô°(€€€€ˆÄÜ´ÄÄĞÜQ`ˆèì‰¹…µ”ˆè€‰…Í¡•Üˆ°€‰¡•àˆè€ˆàáÙ‰ô°(€€€€ˆÄÜ´ÄÈÈÜQ`ˆèì‰¹…µ”ˆè€‰5½¡„5½ÕÍÍ”ˆ°€‰¡•àˆè€ˆĞÜàØĞ‰ô°((€€€€Œ	É½İ¹Ì(€€€€ˆÄÜ´ÄÌÈàQQ`ˆèì‰¹…µ”ˆè€‰Q…İ¹ä	É½İ¸ˆ°€‰¡•àˆè€ˆØİÕ‰ô°(€€€€ˆÄà´ÄÀÌÄQ`ˆèì‰¹…µ”ˆè€‰Q¥•ÈÌå”ˆ°€‰¡•àˆè€ˆŒåÙĞä‰ô°(€€€€ˆÄà´ÄÀÌÌQ`ˆèì‰¹…µ”ˆè€‰	½¹”	É½İ¸ˆ°€‰¡•àˆè€ˆŒåÜäĞÄ‰ô°(€€€€ˆÄà´ÄÀĞàQ`ˆèì‰¹…µ”ˆè€‰AÕµÁ­¥¸MÁ¥”ˆ°€‰¡•àˆè€ˆŒåÕÉ‰ô°(€€€€ˆÄà´ÄÄÈĞQQ`ˆèì‰¹…µ”ˆè€‰A…ÉÑÉ¥‘”ˆ°€‰¡•àˆè€ˆŒáÙÑ‰ô°(€€€€ˆÄà´ÄÄÌÀQ`ˆèì‰¹…µ”ˆè€‰Q¡ÉÕÍ ˆ°€‰¡•àˆè€ˆŒáØÄĞÌ‰ô°(€€€€ˆÄà´ÄÄĞÈQ`ˆèì‰¹…µ”ˆè€‰…Ñ¡…äMÁ¥”ˆ°€‰¡•àˆè€ˆŒäÈÑÈÀ‰ô°(€€€€ˆÄà´ÄÈÈÈQ`ˆèì‰¹…µ”ˆè€‰…É…™”ˆ°€‰¡•àˆè€ˆŒÙÔÄĞÈ‰ô°(€€€€ˆÄà´ÄÌÄĞQQ`ˆèì‰¹…µ”ˆè€‰½¹‘Õ”Õ‘”ˆ°€‰¡•àˆè€ˆŒÜĞÔäĞä‰ô°(€€€€ˆÄä´ÀäÄÔQQ`ˆèì‰¹…µ”ˆè€‰½™™•”	•…¸ˆ°€‰¡•àˆè€ˆŒÑÌĞÉ‰ô°(€€€€ˆÄä´ÄÀÄÈQ`ˆèì‰¹…µ”ˆè€‰¡½½±…Ñ”	É½İ¸ˆ°€‰¡•àˆè€ˆŒĞĞÌÄÈà‰ô°(€€€€ˆÄä´ÄÀÈÀQ`ˆèì‰¹…µ”ˆè€‰•µ¥Ñ…ÍÍ”ˆ°€‰¡•àˆè€ˆŒÍÉÈÌ‰ô°(€€€€ˆÄä´ÄÄÄØQ`ˆèì‰¹…µ”ˆè€‰)…Ù„ˆ°€‰¡•àˆè€ˆŒÌàÉÈÌ‰ô°(€€€€ˆÄä´ÄÌÄĞQQ`ˆèì‰¹…µ”ˆè€‰M•…°	É½İ¸ˆ°€‰¡•àˆè€ˆŒĞØÌÌÈä‰ô°(€€€€ˆÄä´ÄÌÈÄQ`ˆèì‰¹…µ”ˆè€‰IÕ´I…¥Í¥¸ˆ°€‰¡•àˆè€ˆŒÕÌÜÉ‰ô°(€€€€ˆÄä´ÄĞÈÀQ`ˆèì‰¹…µ”ˆè€‰	É½İ¸MÑ½¹”ˆ°€‰¡•àˆè€ˆŒÕÍÉ‰ô°(€€€€ˆÄä´ÄÔÄàQ`ˆèì‰¹…µ”ˆè€‰	¥ÑÑ•È¡½½±…Ñ”ˆ°€‰¡•àˆè€ˆŒÍÈÌÈÈ‰ô°((€€€€Œ=É…¹•Ì(€€€€ˆÄĞ´ÄÀØĞQ`ˆèì‰¹…µ”ˆè€‰M…™™É½¸ˆ°€‰¡•àˆè€ˆåàÈÔ‰ô°(€€€€ˆÄÔ´ÄÈĞÜQQ`ˆèì‰¹…µ”ˆè€‰Q…¹•É¥¹”ˆ°€‰¡•àˆè€ˆÈáÅ‰ô°(€€€€ˆÄÔ´ÄÌĞÀ…Q`ˆèì‰¹…µ”ˆè€‰	É¥¡Ğ5…É¥½±ˆ°€‰¡•àˆè€ˆÌäĞÈÈ‰ô°(€€€€ˆÄØ´ÄÈØÀ…Q`ˆèì‰¹…µ”ˆè€‰ÁÉ¥½Ğˆ°€‰¡•àˆè€ˆáÈÌ‰ô°(€€€€ˆÄØ´ÄÌÔàQ`ˆèì‰¹…µ”ˆè€‰Y¥‰É…¹Ğ=É…¹”ˆ°€‰¡•àˆè€ˆİÅ‰ô°(€€€€ˆÄØ´ÄĞØÈ…Q`ˆèì‰¹…µ”ˆè€‰=É…¹”A••°ˆ°€‰¡•àˆè€ˆàÌÌÈ‰ô°(€€€€ˆÄÜ´ÄÌÔÀQ`ˆèì‰¹…µ”ˆè€‰…É¬¡•‘‘…Èˆ°€‰¡•àˆè€ˆÀİÉ‰ô°(€€€€ˆÄÜ´ÄÌØÄQ`ˆèì‰¹…µ”ˆè€‰)…™™„=É…¹”ˆ°€‰¡•àˆè€ˆØÙÅ‰ô°(€€€€ˆÄÜ´ÄĞØÌQ`ˆèì‰¹…µ”ˆè€‰=É…¹”A½ÁÍ¥±”ˆ°€‰¡•àˆè€ˆÀÙÉ‰ô°(€€€€ˆÄÜ´ÄÔØÈQ`ˆèì‰¹…µ”ˆè€‰±…µ”ˆ°€‰¡•àˆè€ˆĞÑÈØ‰ô°(€€€€ˆÄÜ´ÄÔØĞQQ`ˆÈ›˜[YHˆÚ\œHÛX]È‹š^ˆˆÑLLÌˆŸKˆŒNLLÍMVèì‰¹…µ”ˆè€‰	ÕÉ¹Ğ=É…¹”ˆ°€‰¡•àˆè€ˆÜÕÄÈ‰ô°(€€€€ˆÄà´ÄĞÔÀ…Q`ˆèì‰¹…µ”ˆè€‰I½½¥‰½ÌQ•„ˆ°€‰¡•àˆè€ˆØÔÔÌÄ‰ô°((€€€€ŒI•‘Ì€¼A¥¹­Ì(€€€€ˆÄÈ´ÄÈÀØQ`ˆèì‰¹…µ”ˆè€‰A•… 	±ÕÍ ˆ°€‰¡•àˆè€ˆÕÕÔ‰ô°(€€€€ˆÄÌ´ÄĞÀĞQQ`ˆèì‰¹…µ”ˆè€‰I½Í”ÕÍĞˆ°€‰¡•àˆè€ˆ	ÁĞ‰ô°(€€€€ˆÄÌ´ÄÔÈÀ…Q`ˆèì‰¹…µ”ˆè€‰I½Í”EÕ…ÉÑèˆ°€‰¡•àˆè€ˆİä‰ô°(€€€€ˆÄĞ´ÄÜÄĞQ`ˆèì‰¹…µ”ˆè€‰½É…°A¥¹¬ˆ°€‰¡•àˆè€ˆàààá‰ô°(€€€€ˆÄÔ´ÄØÈØQQ`ˆèì‰¹…µ”ˆè€‰½¹ M¡•±°ˆ°€‰¡•àˆè€ˆÀàÀàÀ‰ô°(€€€€ˆÄÔ´ÄàÄØQ`ˆèì‰¹…µ”ˆè€‰MÑÉ…İ‰•ÉÉä%”ˆ°€‰¡•àˆè€ˆÜáäÀ‰ô°(€€€€ˆÄÔ´ÈÈÄØQ`ˆèì‰¹…µ”ˆè€‰M…¡•ĞA¥¹¬ˆ°€‰¡•àˆè€ˆÄå	‰ô°(€€€€ˆÄØ´ÄØÌÈ…Q`ˆèì‰¹…µ”ˆè€‰M¡•±°A¥¹¬ˆ°€‰¡•àˆè€ˆåĞ‰ô°(€€€€ˆÄØ´ÄÜÈÀQ`ˆèì‰¹…µ”ˆè€‰I…ÁÑÕÉ”I½Í”ˆ°€‰¡•àˆè€ˆØäá‰ô°(€€€€ˆÄØ´ÄÜÌÔQ`ˆèì‰¹…µ”ˆè€‰½¹™•ÑÑ¤ˆ°€‰¡•àˆè€ˆÔÕÜĞ‰ô°(€€€€ˆÄÜ´ÄĞÔØQQ`ˆèì‰¹…µ”ˆè€‰½É…°ˆ°€‰¡•àˆè€ˆäÕÔà‰ô°(€€€€ˆÄÜ´ÄÔØÌQ`ˆèì‰¹…µ”ˆè€‰=É…¹”¹½´ˆ°€‰¡•àˆè€ˆĞàÈØ‰ô°(€€€€ˆÄÜ´ÄØØĞQQ`ˆèì‰¹…µ”ˆè€‰A½ÁÁäI•ˆ°€‰¡•àˆè€ˆÌàÌÈ‰ô°(€€€€ˆÄà´ÄÔÔÀQ`ˆèì‰¹…µ”ˆè€‰ÕÉ½É„I•ˆ°€‰¡•àˆè€ˆäÍÌÈ‰ô°(€€€€ˆÄà´ÄØÔàQ`ˆèì‰¹…µ”ˆè€‰A½µÁ•¥…¸I•ˆ°€‰¡•àˆè€ˆÔÌÈÉ‰ô°(€€€€ˆÄà´ÄØØÌQ`ˆèì‰¹…µ”ˆè€‰Q½µ…Ñ¼ˆ°€‰¡•àˆè€ˆÈÀÈä‰ô°(€€€€ˆÄà´ÄØØĞQQ`ˆÈ›˜[YHˆ‘šY\H™Y‹š^ˆˆÑÍÈŸKˆŒNLMÍLÖˆÈ›˜[YHˆ”ØØ\›]‹š^ˆˆĞÌLÈŸKˆŒNKLMMMÈÖˆÈ›˜[YHˆÚ[H\\ˆ‹š^ˆˆÎPŒPŒÌŸKˆŒNKLMLÖˆÈ›˜[YHˆ”šX˜›Ûˆ™Y‹š^ˆˆĞÍŒˆŸKˆŒNKLMÖˆÈ›˜[YHˆ•YH™Y‹š^ˆˆĞ‘LQL‘ŸKˆŒNKLMÍŒˆÖˆÈ›˜[YHˆ’YÚš\ÚÈ™Y‹š^ˆˆĞÎLQˆŸKˆŒNKLMÍŒÈÖˆÈ›˜[YHˆ”˜XÚ[™È™Y‹š^ˆˆĞÍÌNLŒŸKˆŒNKLNUÖˆÈ›˜[YHˆÜš[\ÛÛˆ‹š^ˆˆÎNLŒÈŸKˆŒNKLNŒÈÖˆÈ›˜[YHˆÚ[™\ÙH™Y‹š^ˆˆĞMLPL‘HŸK‚ˆÈ[šÜÈÈXYÙ[\ÂˆŒL‹LLˆÈ›˜[YHˆ˜[]Û\\ˆ‹š^ˆˆÑMĞÑQÚ’ˆŒLËLLÌLÖˆÈ›˜[YHˆ•™Z[Y›ÜÙH‹š^ˆˆÑLĞÌŸKˆŒLËLNLˆÖˆÈ›˜[YHˆ”ÙX\Ú[[šÈ‹š^ˆˆÑŒÎÎHŸKˆŒMLNÈÖˆÈ›˜[YHˆØ[™H[šÈ‹š^ˆˆÑÌˆŸKˆŒMLÌLÖˆÈ›˜[YHˆ”š\ÛH[šÈ‹š^ˆˆÑŒLP‘ˆŸKˆŒMKLNŒHÖˆÈ›˜[YHˆ‘›[Z[™ÛÈ[šÈ‹š^ˆˆÑŒNPĞˆŸKˆŒMKLŒŒMÈÖˆÈ›˜[YHˆ”[šÈØ\›˜][Ûˆ‹š^ˆˆÑLÍHŸKˆŒM‹LMÌŒÈÖˆÈ›˜[YHˆ”[šÈ[[Û˜YH‹š^ˆˆÑMPÈŸKˆŒM‹LŒLŒÖˆÈ›˜[YHˆ^˜[XH[šÈ‹š^ˆˆÑMˆŸKˆŒMËLNLˆÖˆÈ›˜[YHˆ”›İYÙH™Y‹š^ˆˆÑMLÌŸKˆŒMËLŒLÈÖˆÈ›˜[YHˆ”[šÈ›[X°êH‹š^ˆˆÑŸKˆŒMËLŒŒÈÖˆÈ›˜[YHˆ‘XÚÚXH[šÈ‹š^ˆˆĞĞNHŸKˆŒNLŒLŒÖˆÈ›˜[YHˆ’Û™^\İXÚÛH‹š^ˆˆÑMÌŸKˆŒNLÍˆÖ": {"name": "Fuchsia Red", "hex": "#B71E56"},
+    "15-0955 TCX": {"name": "Mineral Yellow", "hex": "#D3A029"},
+    "15-1050 TCX": {"name": "Artisan's Gold", "hex": "#D9A441"},
+    "16-0952 TCX": {"name": "Golden Spice", "hex": "#BA8B29"},
+
+    # Beiges / Tans / Neutrals
+    "12-1009 TCX": {"name": "Angora", "hex": "#DFC9A8"},
+    "13-0607 TCX": {"name": "Oyster Gray", "hex": "#D5C8B4"},
+    "13-0908 TCX": {"name": "CrÃ¨me BrÃ»lÃ©e", "hex": "#DCC6A5"},
+    "13-1014 TCX": {"name": "Biscotti", "hex": "#D1B896"},
+    "13-1018 TCX": {"name": "Bleached Sand", "hex": "#E8CFAE"},
+    "13-1106 TCX": {"name": "Cream Tan", "hex": "#D9BA9B"},
+    "13-1108 TCX": {"name": "Nude", "hex": "#D6B191"},
+    "14-1116 TCX": {"name": "Tan", "hex": "#D2B48C"},
+    "14-1118 TCX": {"name": "Amber Light", "hex": "#C99B6C"},
+    "14-1213 TCX": {"name": "Beige", "hex": "#BF9F7F"},
+    "14-1314 TCX": {"name": "Macadamia", "hex": "#C6A582"},
+    "15-1215 TCX": {"name": "Almond Buff", "hex": "#BC9470"},
+    "15-1217 TCX": {"name": "Warm Sand", "hex": "#C09976"},
+    "16-1334 TCX": {"name": "Tawny Birch", "hex": "#B08968"},
+    "16-1341 TCX": {"name": "Sandstone", "hex": "#B08D6B"},
+    "16-1439 TCX": {"name": "Apricot Buff", "hex": "#C39476"},
+    "17-1045 TCX": {"name": "Amber Gold", "hex": "#B87B47"},
+    "17-1147 TCX": {"name": "Cashew", "hex": "#B88B6F"},
+    "17-1227 TCX": {"name": "Mocha Mousse", "hex": "#A47864"},
+
+    # Browns
+    "17-1328 TCX": {"name": "Tawny Brown", "hex": "#A67B5B"},
+    "18-1031 TCX": {"name": "Tiger's Eye", "hex": "#9A6D49"},
+    "18-1033 TCX": {"name": "Bone Brown", "hex": "#9E7941"},
+    "18-1048 TCX": {"name": "Pumpkin Spice", "hex": "#9A5B2B"},
+    "18-1124 TCX": {"name": "Partridge", "hex": "#8A6B4C"},
+    "18-1130 TCX": {"name": "Thrush", "hex": "#8C6143"},
+    "18-1142 TCX": {"name": "Cathay Spice", "hex": "#924A20"},
+    "18-1222 TCX": {"name": "Carafe", "hex": "#6D5142"},
+    "18-1314 TCX": {"name": "Fondue Fudge", "hex": "#745949"},
+    "19-0915 TCX": {"name": "Coffee Bean", "hex": "#4D3A2C"},
+    "19-1012 TCX": {"name": "Chocolate Brown", "hex": "#443128"},
+    "19-1020 TCX": {"name": "Demitasse", "hex": "#3D2B23"},
+    "19-1116 TCX": {"name": "Java", "hex": "#382B23"},
+    "19-1314 TCX": {"name": "Seal Brown", "hex": "#463329"},
+    "19-1321 TCX": {"name": "Rum Raisin", "hex": "#5D372B"},
+    "19-1420 TCX": {"name": "Brown Stone", "hex": "#5C3A2E"},
+    "19-1518 TCX": {"name": "Bitter Chocolate", "hex": "#3D2322"},
+
+    # Oranges
+    "14-1064 TCX": {"name": "Saffron", "hex": "#F9A825"},
+    "15-1247 TCX": {"name": "Tangerine", "hex": "#F28E1C"},
+    "15-1340 TCX": {"name": "Bright Marigold", "hex": "#F39422"},
+    "16-1260 TCX": {"name": "Apricot", "hex": "#FB8B23"},
+    "16-1358 TCX": {"name": "Vibrant Orange", "hex": "#FB7E1B"},
+    "16-1462 TCX": {"name": "Orange Peel", "hex": "#FC8332"},
+    "17-1350 TCX": {"name": "Dark Cheddar", "hex": "#E07B2A"},
+    "17-1361 TCX": {"name": "Jaffa Orange", "hex": "#D66B1F"},
+    "17-1463 TCX": {"name": "Orange Popsicle", "hex": "#F06F2D"},
+    "17-1562 TCX": {"name": "Flame", "hex": "#E44D26"},
+    "17-1564 TCX": {"name": "Cherry Tomato", "hex": "#E24932"},
+    "18-1354 TCX": {"name": "Burnt Orange", "hex": "#C75B12"},
+    "18-1450 TCX": {"name": "Rooibos Tea", "hex": "#B65531"},
+
+    # Reds / Pinks
+    "12-1206 TCX": {"name": "Peach Blush", "hex": "#F5D5C5"},
+    "13-1404 TCX": {"name": "Rose Dust", "hex": "#DBC0B4"},
+    "13-1520 TCX": {"name": "Rose Quartz", "hex": "#F7CAC9"},
+    "14-1714 TCX": {"name": "Coral Pink", "hex": "#E8888D"},
+    "15-1626 TCX": {"name": "Conch Shell", "hex": "#F08080"},
+    "15-1816 TCX": {"name": "Strawberry Ice", "hex": "#E78B90"},
+    "15-2216 TCX": {"name": "Sachet Pink", "hex": "#F19CBB"},
+    "16-1632 TCX": {"name": "Shell Pink", "hex": "#EE9FA4"},
+    "16-1720 TCX": {"name": "Rapture Rose", "hex": "#DC698E"},
+    "16-1735 TCX": {"name": "Confetti", "hex": "#E55C74"},
+    "17-1456 TCX": {"name": "Coral", "hex": "#E95A58"},
+    "17-1563 TCX": {"name": "Orange.com", "hex": "#DA4826"},
+    "17-1664 TCX": {"name": "Poppy Red", "hex": "#DA3832"},
+    "18-1550 TCX": {"name": "Aurora Red", "hex": "#B93A32"},
+    "18-1658 TCX": {"name": "Pompeian Red", "hex": "#B5322B"},
+    "18-1663 TCX": {"name": "Tomato", "hex": "#CE2029"},
+    "18-1664 TCX": {"name": "Fiery Red", "hex": "#D0342C"},
+    "18-1750 TCX": {"name": "Scarlet", "hex": "#BC2A2C"},
+    "19-1557 TCX": {"name": "Chili Pepper", "hex": "#9B1B30"},
+    "19-1650 TCX": {"name": "Ribbon Red", "hex": "#C4022B"},
+    "19-1664 TCX": {"name": "True Red", "hex": "#BE1E2D"},
+    "19-1762 TCX": {"name": "High Risk Red", "hex": "#C91D26"},
+    "19-1763 TCX": {"name": "Racing Red", "hex": "#C71920"},
+    "19-1840 TCX": {"name": "Crimson", "hex": "#990F2C"},
+    "19-1863 TCX": {"name": "Chinese Red", "hex": "#A51A2E"},
+
+    # Pinks / Magentas
+    "12-2904 TCX": {"name": "Ballet Slipper", "hex": "#E7CED4"},
+    "13-1310 TCX": {"name": "Veiled Rose", "hex": "#E3C0B4"},
+    "13-1906 TCX": {"name": "Seashell Pink", "hex": "#F0C8C9"},
+    "14-1803 TCX": {"name": "Candy Pink", "hex": "#F4B6C2"},
+    "14-2710 TCX": {"name": "Prism Pink", "hex": "#F0A1BF"},
+    "15-1821 TCX": {"name": "Flamingo Pink", "hex": "#F19CBB"},
+    "15-2217 TCX": {"name": "Pink Carnation", "hex": "#F4A2C5"},
+    "16-1723 TCX": {"name": "Pink Lemonade", "hex": "#E68FAC"},
+    "16-2120 TCX": {"name": "Azalea Pink", "hex": "#DD6E8F"},
+    "17-1926 TCX": {"name": "Rouge Red", "hex": "#D55070"},
+    "17-2127 TCX": {"name": "Pink FlambÃ©", "hex": "#D24684"},
+    "17-2227 TCX": {"name": "Fuchsia Pink", "hex": "#CB4E8A"},
+    "18-2120 TCX": {"name": "Honeysuckle", "hex": "#D94F70"},
+    "18-2436 TCX": {"name": "Fuchsia Red", "hex": "#B71E56"},
     "19-2047 TCX": {"name": "Beetroot Purple", "hex": "#872657"},
 
     # Purples / Violets
-    "14-3207 TTX ˆèì‰¹…µ”ˆè€‰A¥¹¬1…Ù•¹‘•Èˆ°€‰¡•àˆè€ˆÙÑä‰ô°(€€€€ˆÄÔ´ÌĞÄÈQ`ˆèì‰¹…µ”ˆè€‰1…Ù•¹‘•ÈÉ½ÍĞˆ°€‰¡•àˆè€ˆÅİà‰ô°(€€€€ˆÄÔ´ÌÜÄØQQ`‚#¢²&æÖR#¢$ÆfVæFW""Â&†W‚#¢"4S“D3'ÒÀ¢#bÓ3ƒT…CX": {"name": "Orchid Mist", "hex": "#A690B8"},
-    "17-3615ST5‚#¢²&æÖR#¢$†V-€FööÒÆ–Æ2"Â&†W‚#¢"3“#t'ÒÀ¢#rÓ3s3D5‚#¢²&æÖR#¢$F†Æ–W'ÆR"Â&†W‚#¢"3scc3„'ÒÀ¢#‚Ó3S#D5‚#¢²&æÖR#¢$ÖWF‡—7B÷&6†–B"Â&†W‚#¢"3“c„B'ÒÀ¢#‚Ó3c32D5‚#¢²&æÖR#¢%W'ÆR†V&R"Â&†W‚#¢"3d3D3ƒ2'ÒÀ¢#‚Ó3ƒ3‚D5‚#¢²&æÖR#¢%VÇG&f–öÆWB"Â&†W‚#¢"3TcD#„"'ÒÀ¢#’Ó33#RD5‚#¢²&æÖR#¢$w&R"Â&†W‚#¢"3Sc43T2'ÒÀ¢#’Ó3cCD5‚#¢²&æÖR#¢%W'ÆRÖv–2"Â&†W‚#¢"3D#$ST'ÒÀ¢#’Ó3cC"D5‚#¢²&æÖR#¢%&6‡WFRW'ÆR"Â&†W‚#¢"33ƒ#sD2'ÒÀ ¢2&ÇVW0¢#"ÓC3bEE‚ˆÈ›˜[YHˆ‘[XØ]H›YH‹š^ˆˆĞÍLˆŸKˆŒLËMLLÖˆÈ›˜[YHˆ”Z[ˆZ\ˆ‹š^ˆˆĞPÑQHŸKˆŒLËMÌÖˆÈ›˜[YHˆ˜[Y›YH‹š^ˆˆĞPÎQˆŸKˆŒMMLLˆUÖˆÈ›˜[YHˆÙ\[X[ˆ‹š^ˆˆÎPÑŸKˆŒMMLŒˆÖˆÈ›˜[YHˆ^\™H›YH‹š^ˆˆÎÑHŸKˆŒMMÌN": {"name": "Blue Topaz", "hex": "#85B8CB"},
+    "14-3207 TCX": {"name": "Pink Lavender", "hex": "#D6B4C9"},
+    "15-3412 TCX": {"name": "Lavender Frost", "hex": "#C1A7C8"},
+    "15-3716 TCX": {"name": "Lavender", "hex": "#AE94C1"},
+    "16-3815 TCX": {"name": "Orchid Mist", "hex": "#A690B8"},
+    "17-3612 TCX": {"name": "Heirloom Lilac", "hex": "#927AAA"},
+    "17-3730 TCX": {"name": "Dahlia Purple", "hex": "#76638A"},
+    "18-3521 TCX": {"name": "Amethyst Orchid", "hex": "#90618D"},
+    "18-3633 TCX": {"name": "Purple Hebe", "hex": "#6C4C83"},
+    "18-3838 TCX": {"name": "Ultra Violet", "hex": "#5F4B8B"},
+    "19-3325 TCX": {"name": "Grape", "hex": "#563C5C"},
+    "19-3640 TCX": {"name": "Purple Magic", "hex": "#4B2E5A"},
+    "19-3642 TCX": {"name": "Parachute Purple", "hex": "#38274C"},
+
+    # Blues
+    "12-4306 TCX": {"name": "Delicate Blue", "hex": "#C4D8E2"},
+    "13-4110 TCX": {"name": "Plein Air", "hex": "#B9CEDE"},
+    "13-4308 TCX": {"name": "Ballad Blue", "hex": "#B9C9D6"},
+    "14-4112 TCX": {"name": "Cerulean", "hex": "#9BB7D4"},
+    "14-4122 TCX": {"name": "Azure Blue", "hex": "#86B8CE"},
+    "14-4318 TCX": {"name": "Blue Topaz", "hex": "#85B8CB"},
     "15-3919 TCX": {"name": "Serenity", "hex": "#92A8D1"},
     "15-4020 TCX": {"name": "Dusk Blue", "hex": "#7698C4"},
-    "15-4323!TCX": {"name": "Bonnie Blue", "hex": "#5A9ECB"},
+    "15-4323 TCX": {"name": "Bonnie Blue", "hex": "#5A9ECB"},
     "16-4132 TCX": {"name": "Little Boy Blue", "hex": "#6A9AC4"},
     "16-4134 TCX": {"name": "Marina", "hex": "#4F84C4"},
     "17-4030 TCX": {"name": "Regatta", "hex": "#456990"},
-    "17-4041!TCX": {"name": "Strong Blue", "hex": "#2E5894"},
+    "17-4041 TCX": {"name": "Strong Blue", "hex": "#2E5894"},
     "17-4139 TCX": {"name": "Riviera", "hex": "#2C6CA4"},
-    "17-4247 TTX ˆèì‰¹…µ”ˆè€‰É•¹ 	±Õ”ˆ°€‰¡•àˆè€ˆŒÀÀÜÉÔ‰ô°(€€€€ˆÄÜ´ĞĞÌÔQ`ˆèì‰¹…µ”ˆè€‰	±Õ”)•İ•°ˆ°€‰¡•àˆè€ˆŒÀàÜÙÔ‰ô°(€€€€ˆÄà´ÌäĞäQQ`‚#¢²&æÖR#¢$F§¦Æ–ær&ÇVR"Â&†W‚#¢"33ƒCƒƒ2'ÒÀ¢#‚ÓCCTEU‚ˆÈ›˜[YHˆÛ\ÜÚXÈ›YH‹š^ˆˆÌÎHŸKˆŒNKLÎÖ": {"name": "Sodalite Blue", "hex": "#253A5C"},
-    "19-3948 TTEX#¢²&æÖR#¢$æg’&ÇVR"Â&†W‚#¢"3#c4"'ÒÀ¢#’Ó3“S2D5‚#¢²&æÖR#¢%DU'VRæg’"Â&†W‚#¢"3##ƒCR'ÒÀ¢#’ÓC#BD5‚#¢²&æÖR#¢$G&W72&ÇVW2"Â&†W‚#¢"3#$cCr'ÒÀ¢#’ÓC#‚EE‚ˆÈ›˜[YHˆ•İ[XÛ\ÙH‹š^ˆˆÌŒ‘MÈŸK‚ˆÈX[ÈÈ\œ][Ú\ÙBˆŒMMHÖˆÈ›˜[YHˆ”Ü›İ]Ü™Y[ˆ‹š^ˆˆĞÌˆŸKˆŒMMMU`ˆèì‰¹…µ”ˆè€‰!½¹•å‘•Üˆ°€‰¡•àˆè€ˆÍÙÌ‰ô°(€€€€ˆÄĞ´ĞàÄàQ`ˆèì‰¹…µ”ˆè€‰	±Õ”Q¥¹Ğˆ°€‰¡•àˆè€ˆŒá)Š'J	2** data truncated - full base64 from bash **"},
-}.
+    "17-4247 TCX": {"name": "French Blue", "hex": "#0072B5"},
+    "17-4435 TCX": {"name": "Blue Jewel", "hex": "#0876B5"},
+    "18-3949 TCX": {"name": "Dazzling Blue", "hex": "#384883"},
+    "18-4045 TCX": {"name": "Classic Blue", "hex": "#0F4C81"},
+    "19-3864 TCX": {"name": "Sodalite Blue", "hex": "#253A5C"},
+    "19-3939 TCX": {"name": "Navy Blue", "hex": "#1B1F3B"},
+    "19-3953 TCX": {"name": "True Navy", "hex": "#1B2845"},
+    "19-4024 TCX": {"name": "Dress Blues", "hex": "#212F47"},
+    "19-4028 TCX": {"name": "Total Eclipse", "hex": "#262E43"},
+
+    # Teals / Turquoise
+    "14-4809 TCX": {"name": "Sprout Green", "hex": "#B4D4C2"},
+    "14-4812 TCX": {"name": "Honeydew", "hex": "#A3D6C3"},
+    "14-4818 TCX": {"name": "Blue Tint", "hex": "#8FCED9"},
+    "15-4707 TCX": {"name": "Aqua Foam", "hex": "#9DCCC6"},
+    "15-4722 TCX": {"name": "Scuba Blue", "hex": "#00A0B0"},
+    "15-5217 TCX": {"name": "Pool Green", "hex": "#5BB9A6"},
+    "16-4728 TCX": {"name": "Peacock Blue", "hex": "#0099A8"},
+    "16-5109 TCX": {"name": "Beryl Green", "hex": "#6FA69B"},
+    "16-5127 TCX": {"name": "Arcadia", "hex": "#00A388"},
+    "17-4928 TCX": {"name": "Baltic", "hex": "#219E9C"},
+    "18-4718 TCX": {"name": "Hydro", "hex": "#2E8A8A"},
+    "18-4930 TCX": {"name": "Tropical Green", "hex": "#006F63"},
+    "19-4914 TCX": {"name": "Deep Teal", "hex": "#00424B"},
+    "19-4922 TCX": {"name": "Shaded Spruce", "hex": "#00585E"},
+
+    # Greens
+    "12-0525 TCX": {"name": "Lime Cream", "hex": "#E5E2A1"},
+    "13-0535 TCX": {"name": "Luminary Green", "hex": "#D5DE97"},
+    "14-0123 TCX": {"name": "Green Ash", "hex": "#AAC4A7"},
+    "14-0434 TCX": {"name": "Daiquiri Green", "hex": "#BCD877"},
+    "14-0452 TCX": {"name": "Lime Punch", "hex": "#C5E384"},
+    "15-0343 TCX": {"name": "Greenery", "hex": "#88B04B"},
+    "15-0531 TCX": {"name": "Celery", "hex": "#B0A96E"},
+    "16-0435 TCX": {"name": "Macaw Green", "hex": "#66B032"},
+    "16-6138 TCX": {"name": "Classic Green", "hex": "#3BA55C"},
+    "17-0119 TCX": {"name": "Pesto", "hex": "#55693E"},
+    "17-5641 TCX": {"name": "Jade Cream", "hex": "#00A77E"},
+    "17-6153 TCX": {"name": "Kelly Green", "hex": "#2E8B57"},
+    "18-0135 TCX": {"name": "Vibrant Green", "hex": "#008743"},
+    "18-0420 TCX": {"name": "Beech", "hex": "#6A6431"},
+    "18-0527 TCX": {"name": "Olivine", "hex": "#7D7841"},
+    "18-0538 TCX": {"name": "Golden Lime", "hex": "#937B28"},
+    "18-0625 TCX": {"name": "Olive Branch", "hex": "#766B4A"},
+    "18-6330 TCX": {"name": "Amazon", "hex": "#2B6A4D"},
+    "19-0230 TCX": {"name": "Garden Green", "hex": "#47522C"},
+    "19-0315 TCX": {"name": "Duffel Bag", "hex": "#3C4036"},
+    "19-0323 TCX": {"name": "Rifle Green", "hex": "#424530"},
+    "19-0417 TCX": {"name": "Forest Night", "hex": "#31362F"},
+    "19-5513 TCX": {"name": "Hunter Green", "hex": "#355E3B"},
+    "19-5914 TCX": {"name": "Bottle Green", "hex": "#253D2E"},
+    "19-6050 TCX": {"name": "Eden", "hex": "#264E36"},
+
+    # Grays
+    "12-4705 TCX": {"name": "Glacier Gray", "hex": "#DBE2E9"},
+    "13-4403 TCX": {"name": "Micro Chip", "hex": "#D0D3D4"},
+    "14-4102 TCX": {"name": "Gray Dawn", "hex": "#C9CDD0"},
+    "14-4202 TCX": {"name": "Lunar Rock", "hex": "#BEBFBF"},
+    "14-5002 TCX": {"name": "Silver", "hex": "#B6B5B4"},
+    "15-4101 TCX": {"name": "High-Rise", "hex": "#ADB1B7"},
+    "15-4305 TCX": {"name": "Quarry", "hex": "#9A9B9E"},
+    "16-3850 TCX": {"name": "Sharkskin", "hex": "#8B8A8D"},
+    "16-3916 TCX": {"name": "Silver Filigree", "hex": "#95969A"},
+    "17-0000 TCX": {"name": "Frost Gray", "hex": "#8A8B89"},
+    "17-1502 TCX": {"name": "Ghost Gray", "hex": "#8E8680"},
+    "17-4015 TCX": {"name": "Monument", "hex": "#84888C"},
+    "18-0201 TCX": {"name": "Pewter", "hex": "#6F6E6A"},
+    "18-0615 TCX": {"name": "Dusty Olive", "hex": "#6A6556"},
+    "18-1306 TCX": {"name": "Major Brown", "hex": "#5D4E46"},
+    "18-4005 TCX": {"name": "Steel Gray", "hex": "#6D6B70"},
+    "19-3906 TCX": {"name": "Asphalt", "hex": "#363638"},
+    "19-3910 TCX": {"name": "Iron Gate", "hex": "#4E4B4B"},
+    "19-3911 TCX": {"name": "Moonless Night", "hex": "#2F2E2C"},
+    "19-4005 TCX": {"name": "Black Ink", "hex": "#201F1E"},
+    "19-4007 TCX": {"name": "Caviar", "hex": "#242325"},
+    "19-4305 TCX": {"name": "Licorice", "hex": "#262D34"},
+
+    # Blacks
+    "19-0303 TCX": {"name": "Jet Black", "hex": "#131313"},
+    "19-0506 TCX": {"name": "Jet Set", "hex": "#2C2C2A"},
+    "19-0608 TCX": {"name": "Phantom", "hex": "#2D2A26"},
+    "19-3832 TCX": {"name": "Midnight Blue", "hex": "#1B1B3A"},
+    "19-4203 TCX": {"name": "Anthracite", "hex": "#2F3439"},
+    "19-4205 TCX": {"name": "Tap Shoe", "hex": "#2A2B2D"},
+
+    # Denim / Indigo
+    "18-3920 TCX": {"name": "Bleached Denim", "hex": "#46658A"},
+    "18-3933 TCX": {"name": "Bijou Blue", "hex": "#375086"},
+    "19-3920 TCX": {"name": "Estate Blue", "hex": "#2B3859"},
+    "19-4016 TCX": {"name": "Ensign Blue", "hex": "#223A5E"},
+    "19-4027 TCX": {"name": "Blue Depths", "hex": "#263047"},
+    "19-4150 TCX": {"name": "Princess Blue", "hex": "#00539C"},
+}
+
+
+# ---------------------------------------------------------------------------
+# PANTONE PMS â€” Solid Coated (print / graphics)
+# ---------------------------------------------------------------------------
+PANTONE_PMS = {
+    # Yellows
+    "PMS Yellow C": {"name": "Yellow", "hex": "#FEDD00"},
+    "PMS 100 C": {"name": "100", "hex": "#F5EB61"},
+    "PMS 101 C": {"name": "101", "hex": "#F6EB14"},
+    "PMS 102 C": {"name": "102", "hex": "#FCE300"},
+    "PMS 103 C": {"name": "103", "hex": "#C5A900"},
+    "PMS 104 C": {"name": "104", "hex": "#AA8C00"},
+    "PMS 105 C": {"name": "105", "hex": "#6C5B1E"},
+    "PMS 106 C": {"name": "106", "hex": "#F7E017"},
+    "PMS 107 C": {"name": "107", "hex": "#F9DE0D"},
+    "PMS 108 C": {"name": "108", "hex": "#F6D400"},
+    "PMS 109 C": {"name": "109", "hex": "#FFD100"},
+    "PMS 110 C": {"name": "110", "hex": "#DAA900"},
+    "PMS 111 C": {"name": "111", "hex": "#AB8A00"},
+    "PMS 112 C": {"name": "112", "hex": "#987F00"},
+    "PMS 113 C": {"name": "113", "hex": "#F8DB5E"},
+    "PMS 114 C": {"name": "114", "hex": "#F9D856"},
+    "PMS 115 C": {"name": "115", "hex": "#FBD357"},
+    "PMS 116 C": {"name": "116", "hex": "#FFCD00"},
+    "PMS 117 C": {"name": "117", "hex": "#C99700"},
+    "PMS 118 C": {"name": "118", "hex": "#AC8400"},
+    "PMS 119 C": {"name": "119", "hex": "#816E1F"},
+    "PMS 120 C": {"name": "120", "hex": "#F8D06B"},
+    "PMS 121 C": {"name": "121", "hex": "#FAC96D"},
+    "PMS 122 C": {"name": "122", "hex": "#FCC549"},
+    "PMS 123 C": {"name": "123", "hex": "#FFC72C"},
+    "PMS 124 C": {"name": "124", "hex": "#EAAA00"},
+    "PMS 125 C": {"name": "125", "hex": "#B58500"},
+    "PMS 126 C": {"name": "126", "hex": "#9A7611"},
+
+    # Oranges / Gold
+    "PMS Orange 021 C": {"name": "Orange 021", "hex": "#FE5000"},
+    "PMS 130 C": {"name": "130", "hex": "#F2A900"},
+    "PMS 131 C": {"name": "131", "hex": "#CC8A00"},
+    "PMS 132 C": {"name": "132", "hex": "#A07400"},
+    "PMS 133 C": {"name": "133", "hex": "#684E1D"},
+    "PMS 134 C": {"name": "134", "hex": "#FCC783"},
+    "PMS 135 C": {"name": "135", "hex": "#FFBE5C"},
+    "PMS 136 C": {"name": "136", "hex": "#FFB549"},
+    "PMS 137 C": {"name": "137", "hex": "#FFA300"},
+    "PMS 138 C": {"name": "138", "hex": "#D57800"},
+    "PMS 139 C": {"name": "139", "hex": "#AD6600"},
+    "PMS 140 C": {"name": "140", "hex": "#724E1A"},
+    "PMS 151 C": {"name": "151", "hex": "#FF8200"},
+    "PMS 152 C": {"name": "152", "hex": "#E17000"},
+    "PMS 153 C": {"name": "153", "hex": "#BE6A14"},
+    "PMS 154 C": {"name": "154", "hex": "#95531A"},
+    "PMS 155 C": {"name": "155", "hex": "#EFD3A8"},
+    "PMS 156 C": {"name": "156", "hex": "#EEBE8A"},
+    "PMS 157 C": {"name": "157", "hex": "#ECA154"},
+    "PMS 158 C": {"name": "158", "hex": "#E87722"},
+    "PMS 159 C": {"name": "159", "hex": "#CB6015"},
+    "PMS 160 C": {"name": "160", "hex": "#9D4815"},
+    "PMS 161 C": {"name": "161", "hex": "#603D20"},
+
+    # Reds
+    "PMS Red 032 C": {"name": "Red 032", "hex": "#EF3340"},
+    "PMS Warm Red C": {"name": "Warm Red", "hex": "#F9423A"},
+    "PMS 165 C": {"name": "165", "hex": "#FF671F"},
+    "PMS 166 C": {"name": "166", "hex": "#E35205"},
+    "PMS 167 C": {"name": "167", "hex": "#BE531C"},
+    "PMS 168 C": {"name": "168", "hex": "#6E3219"},
+    "PMS 170 C": {"name": "170", "hex": "#FF8674"},
+    "PMS 171 C": {"name": "171", "hex": "#FF6A39"},
+    "PMS 172 C": {"name": "172", "hex": "#FA4616"},
+    "PMS 173 C": {"name": "173", "hex": "#CF4520"},
+    "PMS 174 C": {"name": "174", "hex": "#963821"},
+    "PMS 175 C": {"name": "175", "hex": "#6B3529"},
+    "PMS 176 C": {"name": "176", "hex": "#FFB2A8"},
+    "PMS 177 C": {"name": "177", "hex": "#FF808B"},
+    "PMS 178 C": {"name": "178", "hex": "#FF585D"},
+    "PMS 179 C": {"name": "179", "hex": "#E03C31"},
+    "PMS 180 C": {"name": "180", "hex": "#BE3A34"},
+    "PMS 181 C": {"name": "181", "hex": "#782F40"},
+    "PMS 185 C": {"name": "185", "hex": "#E4002B"},
+    "PMS 186 C": {"name": "186", "hex": "#C8102E"},
+    "PMS 187 C": {"name": "187", "hex": "#A6192E"},
+    "PMS 188 C": {"name": "188", "hex": "#76232F"},
+    "PMS 199 C": {"name": "199", "hex": "#D50032"},
+    "PMS 200 C": {"name": "200", "hex": "#BA0C2F"},
+    "PMS 201 C": {"name": "201", "hex": "#9D2235"},
+    "PMS 202 C": {"name": "202", "hex": "#862633"},
+
+    # Pinks / Magentas
+    "PMS Rhodamine Red C": {"name": "Rhodamine Red", "hex": "#E10098"},
+    "PMS Pink C": {"name": "Pink", "hex": "#D62598"},
+    "PMS Magenta C": {"name": "Magenta", "hex": "#D0006F"},
+    "PMS 203 C": {"name": "203", "hex": "#ECC3D4"},
+    "PMS 204 C": {"name": "204", "hex": "#E56DB1"},
+    "PMS 205 C": {"name": "205", "hex": "#E0457B"},
+    "PMS 206 C": {"name": "206", "hex": "#CE0F69"},
+    "PMS 207 C": {"name": "207", "hex": "#A50050"},
+    "PMS 208 C": {"name": "208", "hex": "#861F41"},
+    "PMS 209 C": {"name": "209", "hex": "#6F263D"},
+    "PMS 210 C": {"name": "210", "hex": "#F99FC9"},
+    "PMS 211 C": {"name": "211", "hex": "#F57EB6"},
+    "PMS 212 C": {"name": "212", "hex": "#EF5BA1"},
+    "PMS 213 C": {"name": "213", "hex": "#EB3C96"},
+    "PMS 214 C": {"name": "214", "hex": "#CE0058"},
+    "PMS 219 C": {"name": "219", "hex": "#DA1884"},
+    "PMS 220 C": {"name": "220", "hex": "#A50050"},
+    "PMS 221 C": {"name": "221", "hex": "#910048"},
+    "PMS 222 C": {"name": "222", "hex": "#6C1D45"},
+
+    # Purples
+    "PMS Purple C": {"name": "Purple", "hex": "#BB29BB"},
+    "PMS Violet C": {"name": "Violet", "hex": "#440099"},
+    "PMS 250 C": {"name": "250", "hex": "#E3B8D6"},
+    "PMS 251 C": {"name": "251", "hex": "#DD9CDF"},
+    "PMS 252 C": {"name": "252", "hex": "#C724B1"},
+    "PMS 253 C": {"name": "253", "hex": "#A4298C"},
+    "PMS 254 C": {"name": "254", "hex": "#84329B"},
+    "PMS 255 C": {"name": "255", "hex": "#6E2B62"},
+    "PMS 256 C": {"name": "256", "hex": "#CAA2DD"},
+    "PMS 257 C": {"name": "257", "hex": "#B288B9"},
+    "PMS 258 C": {"name": "258", "hex": "#8F3F97"},
+    "PMS 259 C": {"name": "259", "hex": "#6D2077"},
+    "PMS 260 C": {"name": "260", "hex": "#5D285F"},
+    "PMS 261 C": {"name": "261", "hex": "#4B244A"},
+    "PMS 262 C": {"name": "262", "hex": "#51284F"},
+    "PMS 266 C": {"name": "266", "hex": "#753BBD"},
+    "PMS 267 C": {"name": "267", "hex": "#5F259F"},
+    "PMS 268 C": {"name": "268", "hex": "#582C83"},
+    "PMS 269 C": {"name": "269", "hex": "#512D6D"},
+
+    # Blues
+    "PMS Blue 072 C": {"name": "Blue 072", "hex": "#10069F"},
+    "PMS Reflex Blue C": {"name": "Reflex Blue", "hex": "#001489"},
+    "PMS Process Blue C": {"name": "Process Blue", "hex": "#0085CA"},
+    "PMS 270 C": {"name": "270", "hex": "#A3A7D4"},
+    "PMS 271 C": {"name": "271", "hex": "#8295D4"},
+    "PMS 272 C": {"name": "272", "hex": "#6670B2"},
+    "PMS 273 C": {"name": "273", "hex": "#1E22AA"},
+    "PMS 274 C": {"name": "274", "hex": "#1B1064"},
+    "PMS 275 C": {"name": "275", "hex": "#1E0B44"},
+    "PMS 276 C": {"name": "276", "hex": "#221C35"},
+    "PMS 280 C": {"name": "280", "hex": "#012169"},
+    "PMS 281 C": {"name": "281", "hex": "#00205B"},
+    "PMS 282 C": {"name": "282", "hex": "#041E42"},
+    "PMS 283 C": {"name": "283", "hex": "#99BADD"},
+    "PMS 284 C": {"name": "284", "hex": "#6CACE4"},
+    "PMS 285 C": {"name": "285", "hex": "#0072CE"},
+    "PMS 286 C": {"name": "286", "hex": "#0033A0"},
+    "PMS 287 C": {"name": "287", "hex": "#003087"},
+    "PMS 288 C": {"name": "288", "hex": "#002D74"},
+    "PMS 289 C": {"name": "289", "hex": "#0C2340"},
+    "PMS 290 C": {"name": "290", "hex": "#C6DAE7"},
+    "PMS 291 C": {"name": "291", "hex": "#9BCBEB"},
+    "PMS 292 C": {"name": "292", "hex": "#69B3E7"},
+    "PMS 293 C": {"name": "293", "hex": "#003DA5"},
+    "PMS 294 C": {"name": "294", "hex": "#002F6C"},
+    "PMS 295 C": {"name": "295", "hex": "#002855"},
+    "PMS 296 C": {"name": "296", "hex": "#051C2C"},
+    "PMS 297 C": {"name": "297", "hex": "#71C5E8"},
+    "PMS 298 C": {"name": "298", "hex": "#41B6E6"},
+    "PMS 299 C": {"name": "299", "hex": "#00A3E0"},
+    "PMS 300 C": {"name": "300", "hex": "#005EB8"},
+    "PMS 301 C": {"name": "301", "hex": "#004C97"},
+    "PMS 302 C": {"name": "302", "hex": "#003E6B"},
+    "PMS 303 C": {"name": "303", "hex": "#002A3A"},
+
+    # Cyans / Teals
+    "PMS 305 C": {"name": "305", "hex": "#59CBE8"},
+    "PMS 306 C": {"name": "306", "hex": "#00B5E2"},
+    "PMS 307 C": {"name": "307", "hex": "#0076A8"},
+    "PMS 308 C": {"name": "308", "hex": "#00587C"},
+    "PMS 309 C": {"name": "309", "hex": "#003B49"},
+    "PMS 310 C": {"name": "310", "hex": "#6AD1E3"},
+    "PMS 311 C": {"name": "311", "hex": "#0DB2BC"},
+    "PMS 312 C": {"name": "312", "hex": "#009FB7"},
+    "PMS 313 C": {"name": "313", "hex": "#008DA8"},
+    "PMS 314 C": {"name": "314", "hex": "#007396"},
+    "PMS 315 C": {"name": "315", "hex": "#005F83"},
+    "PMS 316 C": {"name": "316", "hex": "#003B49"},
+    "PMS 320 C": {"name": "320", "hex": "#009CA6"},
+    "PMS 321 C": {"name": "321", "hex": "#008996"},
+    "PMS 322 C": {"name": "322", "hex": "#00778B"},
+    "PMS 323 C": {"name": "323", "hex": "#006271"},
+    "PMS 324 C": {"name": "324", "hex": "#9CDBD9"},
+    "PMS 325 C": {"name": "325", "hex": "#64CCC9"},
+    "PMS 326 C": {"name": "326", "hex": "#00B2A9"},
+    "PMS 327 C": {"name": "327", "hex": "#008675"},
+    "PMS 328 C": {"name": "328", "hex": "#00635B"},
+    "PMS 329 C": {"name": "329", "hex": "#00524C"},
+    "PMS 330 C": {"name": "330", "hex": "#13362B"},
+
+    # Greens
+    "PMS Green C": {"name": "Green", "hex": "#00AB84"},
+    "PMS 332 C": {"name": "332", "hex": "#B9DCD2"},
+    "PMS 333 C": {"name": "333", "hex": "#3CDBC0"},
+    "PMS 334 C": {"name": "334", "hex": "#00996B"},
+    "PMS 335 C": {"name": "335", "hex": "#00664F"},
+    "PMS 336 C": {"name": "336", "hex": "#00573F"},
+    "PMS 337 C": {"name": "337", "hex": "#9ABEAA"},
+    "PMS 338 C": {"name": "338", "hex": "#6ECEB2"},
+    "PMS 339 C": {"name": "339", "hex": "#00B388"},
+    "PMS 340 C": {"name": "340", "hex": "#00843D"},
+    "PMS 341 C": {"name": "341", "hex": "#00693E"},
+    "PMS 342 C": {"name": "342", "hex": "#006341"},
+    "PMS 343 C": {"name": "343", "hex": "#115740"},
+    "PMS 347 C": {"name": "347", "hex": "#009A44"},
+    "PMS 348 C": {"name": "348", "hex": "#046A38"},
+    "PMS 349 C": {"name": "349", "hex": "#046A38"},
+    "PMS 350 C": {"name": "350", "hex": "#234F1E"},
+    "PMS 354 C": {"name": "354", "hex": "#00B140"},
+    "PMS 355 C": {"name": "355", "hex": "#009639"},
+    "PMS 356 C": {"name": "356", "hex": "#007A33"},
+    "PMS 357 C": {"name": "357", "hex": "#215732"},
+    "PMS 360 C": {"name": "360", "hex": "#6CC24A"},
+    "PMS 361 C": {"name": "361", "hex": "#43B02A"},
+    "PMS 362 C": {"name": "362", "hex": "#487A3C"},
+    "PMS 363 C": {"name": "363", "hex": "#4C8C2B"},
+    "PMS 364 C": {"name": "364", "hex": "#4A7729"},
+    "PMS 365 C": {"name": "365", "hex": "#D0DEBB"},
+    "PMS 366 C": {"name": "366", "hex": "#BBD794"},
+    "PMS 367 C": {"name": "367", "hex": "#A4D65E"},
+    "PMS 368 C": {"name": "368", "hex": "#78BE20"},
+    "PMS 369 C": {"name": "369", "hex": "#64A70B"},
+    "PMS 370 C": {"name": "370", "hex": "#658D1B"},
+    "PMS 371 C": {"name": "371", "hex": "#506228"},
+    "PMS 375 C": {"name": "375", "hex": "#97D700"},
+    "PMS 376 C": {"name": "376", "hex": "#84BD00"},
+    "PMS 377 C": {"name": "377", "hex": "#7A9A01"},
+    "PMS 378 C": {"name": "378", "hex": "#53682B"},
+
+    # Warm Grays
+    "PMS Warm Gray 1 C": {"name": "Warm Gray 1", "hex": "#D7D2CB"},
+    "PMS Warm Gray 2 C": {"name": "Warm Gray 2", "hex": "#CBC4BC"},
+    "PMS Warm Gray 3 C": {"name": "Warm Gray 3", "hex": "#BFB8AF"},
+    "PMS Warm Gray 4 C": {"name": "Warm Gray 4", "hex": "#B6ADA5"},
+    "PMS Warm Gray 5 C": {"name": "Warm Gray 5", "hex": "#ADA59A"},
+    "PMS Warm Gray 6 C": {"name": "Warm Gray 6", "hex": "#A59E93"},
+    "PMS Warm Gray 7 C": {"name": "Warm Gray 7", "hex": "#968C83"},
+    "PMS Warm Gray 8 C": {"name": "Warm Gray 8", "hex": "#8B8178"},
+    "PMS Warm Gray 9 C": {"name": "Warm Gray 9", "hex": "#83786F"},
+    "PMS Warm Gray 10 C": {"name": "Warm Gray 10", "hex": "#796E65"},
+    "PMS Warm Gray 11 C": {"name": "Warm Gray 11", "hex": "#6A5F55"},
+
+    # Cool Grays
+    "PMS Cool Gray 1 C": {"name": "Cool Gray 1", "hex": "#D9D9D6"},
+    "PMS Cool Gray 2 C": {"name": "Cool Gray 2", "hex": "#D0D0CE"},
+    "PMS Cool Gray 3 C": {"name": "Cool Gray 3", "hex": "#C8C9C7"},
+    "PMS Cool Gray 4 C": {"name": "Cool Gray 4", "hex": "#BBBCBC"},
+    "PMS Cool Gray 5 C": {"name": "Cool Gray 5", "hex": "#B1B3B3"},
+    "PMS Cool Gray 6 C": {"name": "Cool Gray 6", "hex": "#A7A8AA"},
+    "PMS Cool Gray 7 C": {"name": "Cool Gray 7", "hex": "#97999B"},
+    "PMS Cool Gray 8 C": {"name": "Cool Gray 8", "hex": "#888B8D"},
+    "PMS Cool Gray 9 C": {"name": "Cool Gray 9", "hex": "#75787B"},
+    "PMS Cool Gray 10 C": {"name": "Cool Gray 10", "hex": "#63666A"},
+    "PMS Cool Gray 11 C": {"name": "Cool Gray 11", "hex": "#53565A"},
+
+    # Browns / Earth
+    "PMS 462 C": {"name": "462", "hex": "#6B4F3A"},
+    "PMS 463 C": {"name": "463", "hex": "#704A2A"},
+    "PMS 464 C": {"name": "464", "hex": "#704820"},
+    "PMS 465 C": {"name": "465", "hex": "#C5A572"},
+    "PMS 466 C": {"name": "466", "hex": "#CBA578"},
+    "PMS 467 C": {"name": "467", "hex": "#D3B17D"},
+    "PMS 468 C": {"name": "468", "hex": "#DDC9A3"},
+    "PMS 469 C": {"name": "469", "hex": "#693F23"},
+    "PMS 470 C": {"name": "470", "hex": "#A6631B"},
+    "PMS 471 C": {"name": "471", "hex": "#B66E41"},
+    "PMS 472 C": {"name": "472", "hex": "#E59E6D"},
+    "PMS 473 C": {"name": "473", "hex": "#F1C6A7"},
+    "PMS 474 C": {"name": "474", "hex": "#EFCBAF"},
+    "PMS 475 C": {"name": "475", "hex": "#ECC19D"},
+    "PMS 476 C": {"name": "476", "hex": "#4E3629"},
+    "PMS 477 C": {"name": "477", "hex": "#572D2D"},
+    "PMS 478 C": {"name": "478", "hex": "#653024"},
+    "PMS 479 C": {"name": "479", "hex": "#AD8A64"},
+    "PMS 480 C": {"name": "480", "hex": "#BE9B7B"},
+
+    # Black
+    "PMS Black C": {"name": "Black", "hex": "#2D2926"},
+    "PMS Black 2 C": {"name": "Black 2", "hex": "#332F21"},
+    "PMS Black 3 C": {"name": "Black 3", "hex": "#212721"},
+    "PMS Black 4 C": {"name": "Black 4", "hex": "#31261D"},
+    "PMS Black 5 C": {"name": "Black 5", "hex": "#3E2C29"},
+    "PMS Black 6 C": {"name": "Black 6", "hex": "#101820"},
+    "PMS Black 7 C": {"name": "Black 7", "hex": "#3D3935"},
 }
