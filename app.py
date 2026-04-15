@@ -41,7 +41,7 @@ from r2_client import from_secrets as build_r2_from_secrets
 # ---------------------------------------------------------------------------
 NANO_BANANA_PRO_ENDPOINT = "https://api.freepik.com/v1/ai/text-to-image/nano-banana-pro"
 RESOLUTION = "4K"
-POLL_INTERVAL_S = 3
+POLL_INTERVAL_S = 2
 POLL_TIMEOUT_S = 360
 
 PREVIEW_WIDTH = 520  # display width in px for both gallery images
@@ -172,28 +172,22 @@ st.markdown(
         line-height: 1 !important;
     }
 
-    /* Gallery header alignment — both columns get an equal-height
-       header area so the image top edges line up exactly. */
-    .gallery-header {
-        height: 48px !important;
-        min-height: 48px !important;
-        max-height: 48px !important;
-        display: flex !important;
-        align-items: center !important;
-        padding: 0 4px !important;
-        margin: 0 0 8px 0 !important;
-        box-sizing: border-box !important;
-        font-size: 13px !important;
-    }
-    /* Force the nav row horizontal block to exactly match the left
-       column's gallery-header height. */
+    /* Gallery alignment — BOTH columns use the same 4-column
+       horizontal block for their top row. We lock it to a fixed
+       height so image tops line up pixel-perfect on the left
+       and right. Any 4-column stHorizontalBlock on the page is
+       one of these header rows. */
     div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"]:nth-child(4)),
     div[data-testid="stHorizontalBlock"]:has(> div[data-testid="column"]:nth-child(4)) {
-        min-height: 48px !important;
-        max-height: 48px !important;
-        margin-bottom: 8px !important;
+        height: 56px !important;
+        min-height: 56px !important;
+        max-height: 56px !important;
+        margin-bottom: 10px !important;
         align-items: center !important;
+        box-sizing: border-box !important;
     }
+    /* Kill inner vertical-block gap and element margin so the only
+       thing deciding row height is the row's own fixed height. */
     div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"]:nth-child(4)) [data-testid="stVerticalBlock"],
     div[data-testid="stHorizontalBlock"]:has(> div[data-testid="column"]:nth-child(4)) [data-testid="stVerticalBlock"] {
         gap: 0 !important;
@@ -201,6 +195,13 @@ st.markdown(
     div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"]:nth-child(4)) [data-testid="stElementContainer"],
     div[data-testid="stHorizontalBlock"]:has(> div[data-testid="column"]:nth-child(4)) [data-testid="stElementContainer"] {
         margin: 0 !important;
+    }
+    /* The stImage element inside either gallery column sits flush
+       against the bottom of the 56px header, giving both previews
+       the same y origin. */
+    div[data-testid="stColumn"] > div[data-testid="stVerticalBlock"] > [data-testid="stElementContainer"]:has(> [data-testid="stImage"]),
+    div[data-testid="column"] > div[data-testid="stVerticalBlock"] > [data-testid="stElementContainer"]:has(> [data-testid="stImage"]) {
+        margin-top: 0 !important;
     }
     </style>
     """,
@@ -780,14 +781,28 @@ PETROL_BOX = (
     "\">{text}</div>"
 )
 
-GALLERY_HEADER = (
-    "<div class='gallery-header'><strong>{text}</strong></div>"
-)
-
 col_left, col_right = st.columns(2, gap="medium")
 
+# Fixed-height label block used inside the top [1,1,9,1] row of both
+# columns. It provides the "Original" / "Result" caption with the same
+# vertical padding/line-height as the right column's nav caption, so
+# the image tops line up to the pixel.
+TOP_LABEL = (
+    "<div style='padding:11px 0 0 4px;font-size:13px;line-height:1.3;'>"
+    "<strong>{text}</strong></div>"
+)
+
 with col_left:
-    st.markdown(GALLERY_HEADER.format(text="Original"), unsafe_allow_html=True)
+    # Mirror the right column's 4-column nav row structure even when
+    # there are no nav controls. Streamlit renders both sides with the
+    # same stHorizontalBlock DOM, and the CSS :has selector forces both
+    # to the same fixed height — that is how we guarantee the image
+    # tops line up regardless of whether the right column shows a nav
+    # row or a "Result" placeholder.
+    _l1, _l2, l_cap, _l3 = st.columns([1, 1, 9, 1])
+    with l_cap:
+        st.markdown(TOP_LABEL.format(text="Original"), unsafe_allow_html=True)
+
     # Priority: show the CURRENT upload if one is present (fresh uploads always
     # take precedence). Otherwise fall back to the active history entry's
     # original so navigation still makes sense when browsing past generations.
@@ -803,9 +818,10 @@ with col_left:
 
 with col_right:
     if not has_history:
-        # Matching gallery header so the petrol placeholder sits at the
-        # same y-coordinate as the left column's image.
-        st.markdown(GALLERY_HEADER.format(text="Result"), unsafe_allow_html=True)
+        # Same 4-column structure as the left column so heights match.
+        _r1, _r2, r_cap, _r3 = st.columns([1, 1, 9, 1])
+        with r_cap:
+            st.markdown(TOP_LABEL.format(text="Result"), unsafe_allow_html=True)
         st.markdown(
             PETROL_BOX.format(text="Pick a Pantone and click Generate."),
             unsafe_allow_html=True,
@@ -879,7 +895,7 @@ with col_right:
               #{btn_uid}_wrap {{
                 display: flex;
                 justify-content: center;
-                margin-top: 6px;
+                margin-top: 16px;
                 font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
               }}
               #{btn_uid} {{
