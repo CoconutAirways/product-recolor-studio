@@ -519,29 +519,32 @@ with st.sidebar:
               // React's native setter and dispatching a synthetic
               // input event.
               //
-              // Recursion guard: we track the last value we committed
-              // on the element itself (NOT a closure flag). Our
-              // dispatched 'input' event re-fires this listener with
-              // the same value, which we then skip. Unlike a boolean
-              // "inFlight" closure flag, this survives React DOM node
-              // reuse across reruns — the value comparison always
-              // works even if the guard state somehow got stale,
-              // because a DIFFERENT new Pantone code will always
-              // differ from the last committed one.
+              // Recursion guard: `dispatching` is a closure flag set
+              // true BEFORE dispatchEvent and cleared in the finally
+              // block. JS event dispatch is synchronous, so when our
+              // dispatched 'input' event re-fires this listener, the
+              // flag is still true and we skip. The finally clears it
+              // the instant dispatch returns, so the flag can NEVER
+              // get stuck — no timing races, no stale state across
+              // reruns, no value-comparison traps.
               const nativeSetter = Object.getOwnPropertyDescriptor(
                 parentWin.HTMLInputElement.prototype, 'value'
               ).set;
+              let dispatching = false;
 
               const commitValue = (v, refocus) => {{
+                if (dispatching) return;
                 if (!VALID.has(v)) return;
-                if (inp.__pantoneLastCommitted === v) return;
-                inp.__pantoneLastCommitted = v;
+                dispatching = true;
                 try {{
                   nativeSetter.call(inp, v);
                   inp.dispatchEvent(
                     new Event('input', {{ bubbles: true }})
                   );
                 }} catch (e) {{}}
+                finally {{
+                  dispatching = false;
+                }}
                 parentWin.__pantoneRefocus = !!refocus;
                 // Let React finish its onChange cycle, then blur so
                 // Streamlit commits the new value to Python.
@@ -553,6 +556,7 @@ with st.sidebar:
               // Exact-match auto-commit while typing — user never has
               // to press Enter.
               inp.addEventListener('input', () => {{
+                if (dispatching) return;
                 const v = (inp.value || "").trim().toUpperCase();
                 if (VALID.has(v)) commitValue(v, true);
               }});
@@ -560,22 +564,11 @@ with st.sidebar:
               // Datalist pick fires 'change'. Commit, keep focus lost
               // (user just clicked, they don't need the cursor back).
               inp.addEventListener('change', () => {{
+                if (dispatching) return;
                 const v = (inp.value || "").trim().toUpperCase();
                 if (VALID.has(v)) commitValue(v, false);
               }});
             }}
-
-            // Every time attach() runs (including on Streamlit reruns
-            // where React reuses the same DOM node), sync the
-            // "last committed" marker to the current Python value.
-            // This way the guard never blocks a legitimate new commit,
-            // even if Python sent back the same value we just wrote.
-            try {{
-              const curVal = (inp.value || "").trim().toUpperCase();
-              if (VALID.has(curVal)) {{
-                inp.__pantoneLastCommitted = curVal;
-              }}
-            }} catch (e) {{}}
 
             // After a self-triggered blur-commit, Streamlit reruns and
             // the input is recreated — put the cursor back at the end
