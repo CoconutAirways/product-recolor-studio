@@ -536,9 +536,15 @@ with st.sidebar:
                 }} catch (e) {{}}
                 parentWin.__pantoneRefocus = !!refocus;
                 // Let React finish its onChange cycle, then blur so
-                // Streamlit commits the new value to Python.
+                // Streamlit commits the new value to Python. Reset
+                // the inFlight guard on a slight delay — React may
+                // re-use the same <input> DOM node across reruns,
+                // which means this closure (and its `inFlight` var)
+                // persists. Without the reset, the third commit gets
+                // silently swallowed.
                 setTimeout(() => {{
                   try {{ inp.blur(); }} catch (e) {{}}
+                  setTimeout(() => {{ inFlight = false; }}, 50);
                 }}, 0);
               }};
 
