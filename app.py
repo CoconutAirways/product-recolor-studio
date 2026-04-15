@@ -171,6 +171,37 @@ st.markdown(
         font-size: 16px !important;
         line-height: 1 !important;
     }
+
+    /* Gallery header alignment — both columns get an equal-height
+       header area so the image top edges line up exactly. */
+    .gallery-header {
+        height: 48px !important;
+        min-height: 48px !important;
+        max-height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+        padding: 0 4px !important;
+        margin: 0 0 8px 0 !important;
+        box-sizing: border-box !important;
+        font-size: 13px !important;
+    }
+    /* Force the nav row horizontal block to exactly match the left
+       column's gallery-header height. */
+    div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"]:nth-child(4)),
+    div[data-testid="stHorizontalBlock"]:has(> div[data-testid="column"]:nth-child(4)) {
+        min-height: 48px !important;
+        max-height: 48px !important;
+        margin-bottom: 8px !important;
+        align-items: center !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"]:nth-child(4)) [data-testid="stVerticalBlock"],
+    div[data-testid="stHorizontalBlock"]:has(> div[data-testid="column"]:nth-child(4)) [data-testid="stVerticalBlock"] {
+        gap: 0 !important;
+    }
+    div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"]:nth-child(4)) [data-testid="stElementContainer"],
+    div[data-testid="stHorizontalBlock"]:has(> div[data-testid="column"]:nth-child(4)) [data-testid="stElementContainer"] {
+        margin: 0 !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -421,6 +452,7 @@ with st.sidebar:
         <script>
         (function() {{
           const parentDoc = window.parent.document;
+          const parentWin = window.parent;
           const LIST_ID = "{list_id}";
           const LABEL   = {repr(input_label)};
 
@@ -438,17 +470,70 @@ with st.sidebar:
           parentDoc.querySelectorAll('datalist[id^="pantone-options-"]')
             .forEach(el => {{ if (el.id !== LIST_ID) el.remove(); }});
 
-          // 3. Attach the list attribute to the actual input element.
+          // 3. Attach the list attribute and auto-commit listeners to the
+          //    actual input element.
           //    NOTE: we intentionally do NOT set autocomplete="off" —
           //    Chrome suppresses the native datalist dropdown when
           //    autocomplete is explicitly disabled on the input.
+          //
+          //    Auto-commit strategy: Streamlit's text_input commits its
+          //    value to Python only on blur / Enter keydown. We want the
+          //    preview to update immediately on every typing pause or
+          //    datalist click, so we debounce an artificial blur. After
+          //    the rerun we refocus the freshly-rendered input at the
+          //    saved cursor position so the user can keep typing
+          //    seamlessly.
           function attach() {{
             const inp = parentDoc.querySelector(
               'input[aria-label="' + LABEL + '"]'
             );
-            if (inp && inp.getAttribute('list') !== LIST_ID) {{
+            if (!inp) return;
+
+            if (inp.getAttribute('list') !== LIST_ID) {{
               inp.setAttribute('list', LIST_ID);
               inp.removeAttribute('autocomplete');
+            }}
+
+            if (!inp.__autoCommitWired) {{
+              inp.__autoCommitWired = true;
+              let timer = null;
+
+              const commit = (refocus) => {{
+                if (timer) {{ clearTimeout(timer); timer = null; }}
+                if (parentDoc.activeElement === inp) {{
+                  try {{
+                    parentWin.__pantoneCursor = inp.selectionStart;
+                  }} catch (e) {{
+                    parentWin.__pantoneCursor = (inp.value || "").length;
+                  }}
+                }}
+                parentWin.__pantoneShouldRefocus = !!refocus;
+                inp.blur();
+              }};
+
+              inp.addEventListener('input', () => {{
+                if (timer) clearTimeout(timer);
+                // Debounce while user is actively typing.
+                timer = setTimeout(() => commit(true), 450);
+              }});
+              // 'change' fires on datalist pick (value committed by browser)
+              // — commit immediately.
+              inp.addEventListener('change', () => commit(false));
+            }}
+
+            // Restore focus + cursor after a self-triggered blur so the
+            // user can keep typing across the rerun.
+            if (parentWin.__pantoneShouldRefocus) {{
+              parentWin.__pantoneShouldRefocus = false;
+              const pos = parentWin.__pantoneCursor;
+              setTimeout(() => {{
+                try {{
+                  inp.focus();
+                  if (typeof pos === 'number') {{
+                    inp.setSelectionRange(pos, pos);
+                  }}
+                }} catch (e) {{}}
+              }}, 0);
             }}
           }}
           attach();
@@ -579,18 +664,24 @@ if upload is not None:
                 raw = upload.read()
             except Exception:
                 raw = b""
-        st.session_state.upload_cache = {"id": upload_id, "bytes": raw}
+        st.session_state.upload_cache = {
+            "id": upload_id,
+            "bytes": raw,
+            "name": upload.name,
+        }
 else:
     # User cleared the uploader → drop the cache
     st.session_state.upload_cache = None
 
 original: Optional[Image.Image] = None
 original_bytes: Optional[bytes] = None
+original_name: str = "image"
 if st.session_state.upload_cache and st.session_state.upload_cache.get("bytes"):
     try:
         raw = st.session_state.upload_cache["bytes"]
         original = Image.open(io.BytesIO(raw)).convert("RGB")
         original_bytes = image_to_jpeg_bytes(original)
+        original_name = st.session_state.upload_cache.get("name") or "image"
     except Exception as e:
         st.error(f"Could not read uploaded image: {e}")
         original = None
@@ -652,14 +743,14 @@ PETROL_BOX = (
     "\">{text}</div>"
 )
 
-LABEL_ROW = (
-    "<div style='padding:6px 0 4px 4px;font-size:13px;'><strong>{text}</strong></div>"
+GALLERY_HEADER = (
+    "<div class='gallery-header'><strong>{text}</strong></div>"
 )
 
 col_left, col_right = st.columns(2, gap="medium")
 
 with col_left:
-    st.markdown(LABEL_ROW.format(text="Original"), unsafe_allow_html=True)
+    st.markdown(GALLERY_HEADER.format(text="Original"), unsafe_allow_html=True)
     # Priority: show the CURRENT upload if one is present (fresh uploads always
     # take precedence). Otherwise fall back to the active history entry's
     # original so navigation still makes sense when browsing past generations.
@@ -675,8 +766,9 @@ with col_left:
 
 with col_right:
     if not has_history:
-        # Matching label row so both petrol bars line up vertically with the left column
-        st.markdown(LABEL_ROW.format(text="Result"), unsafe_allow_html=True)
+        # Matching gallery header so the petrol placeholder sits at the
+        # same y-coordinate as the left column's image.
+        st.markdown(GALLERY_HEADER.format(text="Result"), unsafe_allow_html=True)
         st.markdown(
             PETROL_BOX.format(text="Pick a Pantone and click Generate."),
             unsafe_allow_html=True,
@@ -733,18 +825,101 @@ with col_right:
                 st.rerun()
 
         st.image(cur["result_bytes"], width=PREVIEW_WIDTH)
-        fname = (
-            f"recolor_{cur['system']}_"
-            f"{cur['code'].replace(' ', '_').replace('/', '-')}_4K.png"
-        )
-        # Auto-width download button, horizontally centered via CSS
-        st.download_button(
-            label="⬇ Download 4K PNG",
-            data=cur["result_bytes"],
-            file_name=fname,
-            mime="image/png",
-            use_container_width=False,
-            key=f"dl_active_{active_idx}_{cur['timestamp']}",
+
+        # Build filename: <original_basename>_<pantone_code>.png
+        base = os.path.splitext(cur.get("original_name") or "image")[0]
+        safe_code = cur["code"].replace(" ", "_").replace("/", "-")
+        fname = f"{base}_{safe_code}.png"
+
+        # Custom save button — uses the File System Access API
+        # (showSaveFilePicker) to prompt for a save location. Falls back
+        # to a plain <a download> for browsers without FSA support.
+        b64_data = base64.b64encode(cur["result_bytes"]).decode("ascii")
+        btn_uid = f"dl_{active_idx}_{int(cur['timestamp'] * 1000)}"
+        components_html(
+            f"""
+            <style>
+              #{btn_uid}_wrap {{
+                display: flex;
+                justify-content: center;
+                margin-top: 6px;
+                font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+              }}
+              #{btn_uid} {{
+                display: inline-block;
+                padding: 0.4rem 1.1rem;
+                font-size: 13px;
+                background: #ffffff;
+                color: #31333f;
+                border: 1px solid rgba(49,51,63,0.2);
+                border-radius: 0.5rem;
+                cursor: pointer;
+                transition: all 0.15s;
+              }}
+              #{btn_uid}:hover {{
+                border-color: #1A535C;
+                color: #1A535C;
+              }}
+              #{btn_uid}:active {{
+                background: #f5f5f5;
+              }}
+            </style>
+            <div id="{btn_uid}_wrap">
+              <button id="{btn_uid}">⬇ Download PNG</button>
+            </div>
+            <script>
+            (function() {{
+              const B64 = "{b64_data}";
+              const FNAME = {repr(fname)};
+              const btn = document.getElementById("{btn_uid}");
+              if (!btn) return;
+
+              function b64ToBlob(b64) {{
+                const bin = atob(b64);
+                const len = bin.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) bytes[i] = bin.charCodeAt(i);
+                return new Blob([bytes], {{ type: "image/png" }});
+              }}
+
+              btn.addEventListener("click", async () => {{
+                const blob = b64ToBlob(B64);
+                // Prefer File System Access API for a real save dialog.
+                const fsa = window.showSaveFilePicker
+                  || (window.parent && window.parent.showSaveFilePicker);
+                const scope = window.showSaveFilePicker ? window : window.parent;
+                if (typeof fsa === "function") {{
+                  try {{
+                    const handle = await fsa.call(scope, {{
+                      suggestedName: FNAME,
+                      types: [{{
+                        description: "PNG image",
+                        accept: {{ "image/png": [".png"] }}
+                      }}],
+                    }});
+                    const writable = await handle.createWritable();
+                    await writable.write(blob);
+                    await writable.close();
+                    return;
+                  }} catch (err) {{
+                    if (err && err.name === "AbortError") return;
+                    console.warn("showSaveFilePicker failed, falling back:", err);
+                  }}
+                }}
+                // Fallback: classic <a download> trigger
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = FNAME;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+              }});
+            }})();
+            </script>
+            """,
+            height=56,
         )
 
 st.divider()
@@ -818,6 +993,7 @@ if generate and original is not None and not is_generating:
                     "name": name,
                     "hex_code": hex_code,
                     "original_bytes": jpg_bytes,
+                    "original_name": original_name,
                     "extra": extra,
                     "aspect_ratio": aspect_ratio,
                     "prompt": prompt,
@@ -863,6 +1039,7 @@ if st.session_state.pending_task:
                     "name": pt["name"],
                     "hex": pt["hex_code"],
                     "original_bytes": pt["original_bytes"],
+                    "original_name": pt.get("original_name") or "image",
                     "result_bytes": img_bytes,
                     "extra_instructions": pt["extra"],
                     "elapsed_s": elapsed,
