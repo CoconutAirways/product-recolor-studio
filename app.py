@@ -512,23 +512,38 @@ with st.sidebar:
                 setTimeout(selectAll, 0);
               }});
 
-              // Exact-match auto-commit while typing.
-              inp.addEventListener('input', () => {{
-                const v = (inp.value || "").trim().toUpperCase();
-                if (VALID.has(v)) {{
-                  parentWin.__pantoneRefocus = true;
-                  inp.blur();
-                }}
-              }});
+              // Force React (Streamlit's text_input backing store) to
+              // pick up a value that was set programmatically (e.g. by
+              // a native datalist click). Without this, blur commits
+              // the stale React-tracked value.
+              const nativeSetter = Object.getOwnPropertyDescriptor(
+                parentWin.HTMLInputElement.prototype, 'value'
+              ).set;
+              const syncReact = (v) => {{
+                nativeSetter.call(inp, v);
+                inp.dispatchEvent(new Event('input', {{ bubbles: true }}));
+              }};
 
-              // Datalist pick fires 'change' — commit immediately.
-              inp.addEventListener('change', () => {{
+              const commitIfValid = (refocus) => {{
                 const v = (inp.value || "").trim().toUpperCase();
-                if (VALID.has(v)) {{
-                  parentWin.__pantoneRefocus = false;
-                  inp.blur();
-                }}
-              }});
+                if (!VALID.has(v)) return;
+                // Make sure React sees the current value, then defer
+                // blur() one microtask so React's onChange finishes
+                // before onBlur reads its tracked state.
+                syncReact(v);
+                parentWin.__pantoneRefocus = !!refocus;
+                setTimeout(() => {{
+                  try {{ inp.blur(); }} catch (e) {{}}
+                }}, 0);
+              }};
+
+              // Exact-match auto-commit while typing — user never has
+              // to press Enter.
+              inp.addEventListener('input', () => commitIfValid(true));
+
+              // Datalist pick fires 'change' — commit, don't refocus
+              // (user just clicked, they don't expect the cursor back).
+              inp.addEventListener('change', () => commitIfValid(false));
             }}
 
             // After a self-triggered blur-commit, Streamlit reruns and
@@ -615,21 +630,36 @@ with st.sidebar:
 # UI — Upload (full width)
 # ---------------------------------------------------------------------------
 st.subheader("Upload")
-upload = st.file_uploader(
-    "Product image (PNG / JPG / WEBP, max ~10 MB)",
-    type=["png", "jpg", "jpeg", "webp"],
-    label_visibility="collapsed",
-)
+upload_col, clear_col = st.columns([6, 1])
+with upload_col:
+    upload = st.file_uploader(
+        "Product image (PNG / JPG / WEBP, max ~10 MB)",
+        type=["png", "jpg", "jpeg", "webp"],
+        label_visibility="collapsed",
+        key="product_uploader",
+    )
+with clear_col:
+    if st.session_state.upload_cache is not None:
+        if st.button("✕ Clear", help="Remove the uploaded image", key="clear_upload"):
+            st.session_state.upload_cache = None
+            # Also reset the uploader widget so its thumbnail clears
+            if "product_uploader" in st.session_state:
+                st.session_state.pop("product_uploader", None)
+            st.rerun()
 
 # ---------------------------------------------------------------------------
-# Upload handling — cached via session_state so it survives every rerun
+# Upload handling — sticky cache that survives every rerun
 # ---------------------------------------------------------------------------
 # Streamlit's UploadedFile object is unreliable across reruns triggered
-# by other widgets (e.g. pressing Enter in the Pantone text_input):
-# its internal read pointer can end up at EOF, making Image.open() return
-# an empty image and silently blanking the gallery. We sidestep this by
-# reading the raw bytes *once* when a new file is uploaded and storing
-# them in session_state. Every subsequent rerun decodes from that cache.
+# by other widgets: its internal read pointer can end up at EOF (which
+# causes Image.open() to fail silently), and under some conditions the
+# widget itself can briefly return None after an internal remount. We
+# sidestep both by:
+#   1. Reading the raw bytes once into session_state on first sight.
+#   2. Keeping that cache "sticky" — NEVER auto-dropping it just because
+#      `upload is None` on a given rerun. The cache is only replaced
+#      when a genuinely different file_id is uploaded, or explicitly
+#      cleared via the Clear button above.
 if upload is not None:
     upload_id = getattr(upload, "file_id", None) or f"{upload.name}:{upload.size}"
     cached = st.session_state.upload_cache
@@ -647,9 +677,8 @@ if upload is not None:
             "bytes": raw,
             "name": upload.name,
         }
-else:
-    # User cleared the uploader → drop the cache
-    st.session_state.upload_cache = None
+# NOTE: the `else` branch (upload is None) is intentionally absent.
+# Keep the cache alive across transient None states.
 
 original: Optional[Image.Image] = None
 original_bytes: Optional[bytes] = None
