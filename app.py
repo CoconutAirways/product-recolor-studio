@@ -21,7 +21,6 @@ Secrets / env vars:
 from __future__ import annotations
 
 import base64
-import html as html_mod
 import io
 import os
 import time
@@ -418,181 +417,34 @@ with st.sidebar:
     st.header("2 · Pantone Code")
 
     all_codes = sorted(lookup.keys())
-    state_key = f"pantone_input_{system_key}"
-    if state_key not in st.session_state:
-        st.session_state[state_key] = all_codes[0] if all_codes else ""
+    state_key = f"pantone_select_{system_key}"
 
-    # Native text_input — supports cursor select, backspace, copy/paste
-    pantone_input = st.text_input(
-        "Type Pantone code or name",
+    # Native Streamlit selectbox — click opens the full list, typing in
+    # the search box filters live (no Enter required). Reverted from the
+    # datalist/text_input experiment because selectbox gives the native
+    # "click → list opens → type digits → list jumps" behavior the
+    # workflow actually needs.
+    def _fmt(c: str) -> str:
+        entry = lookup.get(c) or {}
+        return f"{c} · {entry.get('name', '')}"
+
+    code = st.selectbox(
+        "Pantone code",
+        options=all_codes,
+        format_func=_fmt,
         key=state_key,
-        placeholder="e.g. 18-1663  or  Tomato",
-        help="Click for full list, or type to filter. Native select / "
-             "backspace / copy-paste.",
-    )
-    q = (pantone_input or "").strip()
-
-    # ------------------------------------------------------------------
-    # Datalist injection: turn the text_input into a searchable combobox.
-    # We build a <datalist> in the parent document and attach its id to
-    # the real <input> element via a MutationObserver that survives
-    # Streamlit reruns. Full list opens on click; typing filters it
-    # natively; selecting / backspacing / copying all work because it's
-    # still a plain <input>.
-    # ------------------------------------------------------------------
-    options_html = "".join(
-        f'<option value="{html_mod.escape(c)}">'
-        f'{html_mod.escape(lookup[c]["name"])}</option>'
-        for c in all_codes
-    )
-    list_id = f"pantone-options-{system_key}"
-    input_label = "Type Pantone code or name"
-    components_html(
-        f"""
-        <script>
-        (function() {{
-          const parentDoc = window.parent.document;
-          const parentWin = window.parent;
-          const LIST_ID = "{list_id}";
-          const LABEL   = {repr(input_label)};
-
-          // 1. Ensure the datalist exists in the parent document and is current.
-          let dl = parentDoc.getElementById(LIST_ID);
-          if (!dl) {{
-            dl = parentDoc.createElement('datalist');
-            dl.id = LIST_ID;
-            parentDoc.body.appendChild(dl);
-          }}
-          dl.innerHTML = `{options_html}`;
-
-          // 2. Remove stale datalists from the other Pantone system so we
-          //    don't leak options across TCX/PMS switches.
-          parentDoc.querySelectorAll('datalist[id^="pantone-options-"]')
-            .forEach(el => {{ if (el.id !== LIST_ID) el.remove(); }});
-
-          // 3. Attach the list attribute and auto-commit listeners to the
-          //    actual input element.
-          //    NOTE: we intentionally do NOT set autocomplete="off" —
-          //    Chrome suppresses the native datalist dropdown when
-          //    autocomplete is explicitly disabled on the input.
-          //
-          //    Auto-commit strategy: Streamlit's text_input commits its
-          //    value to Python only on blur / Enter keydown. We want the
-          //    preview to update immediately on every typing pause or
-          //    datalist click, so we debounce an artificial blur. After
-          //    the rerun we refocus the freshly-rendered input at the
-          //    saved cursor position so the user can keep typing
-          //    seamlessly.
-          function attach() {{
-            const inp = parentDoc.querySelector(
-              'input[aria-label="' + LABEL + '"]'
-            );
-            if (!inp) return;
-
-            if (inp.getAttribute('list') !== LIST_ID) {{
-              inp.setAttribute('list', LIST_ID);
-              inp.removeAttribute('autocomplete');
-            }}
-
-            if (!inp.__autoCommitWired) {{
-              inp.__autoCommitWired = true;
-              let timer = null;
-
-              const commit = (refocus) => {{
-                if (timer) {{ clearTimeout(timer); timer = null; }}
-                if (parentDoc.activeElement === inp) {{
-                  try {{
-                    parentWin.__pantoneCursor = inp.selectionStart;
-                  }} catch (e) {{
-                    parentWin.__pantoneCursor = (inp.value || "").length;
-                  }}
-                }}
-                parentWin.__pantoneShouldRefocus = !!refocus;
-                inp.blur();
-              }};
-
-              inp.addEventListener('input', () => {{
-                if (timer) clearTimeout(timer);
-                // Debounce while user is actively typing.
-                timer = setTimeout(() => commit(true), 450);
-              }});
-              // 'change' fires on datalist pick (value committed by browser)
-              // — commit immediately.
-              inp.addEventListener('change', () => commit(false));
-            }}
-
-            // Restore focus + cursor after a self-triggered blur so the
-            // user can keep typing across the rerun.
-            if (parentWin.__pantoneShouldRefocus) {{
-              parentWin.__pantoneShouldRefocus = false;
-              const pos = parentWin.__pantoneCursor;
-              setTimeout(() => {{
-                try {{
-                  inp.focus();
-                  if (typeof pos === 'number') {{
-                    inp.setSelectionRange(pos, pos);
-                  }}
-                }} catch (e) {{}}
-              }}, 0);
-            }}
-          }}
-          attach();
-
-          // 4. Streamlit re-renders the input on every rerun — keep watching
-          //    the parent DOM and re-attach whenever it reappears.
-          if (!window.__pantoneObserver) {{
-            window.__pantoneObserver = new MutationObserver(attach);
-            window.__pantoneObserver.observe(parentDoc.body, {{
-              childList: true, subtree: true
-            }});
-          }}
-        }})();
-        </script>
-        """,
-        height=0,
+        label_visibility="collapsed",
+        help="Click to open the list, then type digits to jump to matching codes.",
     )
 
-    def _resolve(q: str) -> Optional[str]:
-        if not q:
-            return None
-        q_up = q.upper()
-        # 1. exact code match
-        if q_up in lookup:
-            return q_up
-        # 2. code starts-with
-        for c in all_codes:
-            if c.startswith(q_up):
-                return c
-        # 3. code contains
-        for c in all_codes:
-            if q_up in c:
-                return c
-        # 4. name contains (case-insensitive)
-        q_low = q.lower()
-        for c in all_codes:
-            if q_low in lookup[c]["name"].lower():
-                return c
-        return None
-
-    resolved = _resolve(q)
-
-    if resolved:
-        code = resolved
+    if code and code in lookup:
         entry = lookup[code]
         name = entry["name"]
         hex_code = entry["hex"]
-        # Small confirmation of what was matched (only useful when fuzzy)
-        if code != q.upper():
-            st.markdown(
-                f"<div style='font-size:12px;opacity:0.75;padding:2px 0 6px 2px;'>"
-                f"→ matched <strong>{code}</strong> · {name}</div>",
-                unsafe_allow_html=True,
-            )
     else:
         code = None
         name = None
         hex_code = None
-        st.warning(f"No {system_key} match for '{q}'")
 
     if hex_code:
         st.markdown("**Preview**")
