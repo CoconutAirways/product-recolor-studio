@@ -517,17 +517,25 @@ with st.sidebar:
               // programmatically (datalist click), React may or may
               // not notice — we force a clean notification by calling
               // React's native setter and dispatching a synthetic
-              // input event. Guarded by inFlight to avoid recursion
-              // from our own dispatch re-triggering this handler.
+              // input event.
+              //
+              // Recursion guard: we track the last value we committed
+              // on the element itself (NOT a closure flag). Our
+              // dispatched 'input' event re-fires this listener with
+              // the same value, which we then skip. Unlike a boolean
+              // "inFlight" closure flag, this survives React DOM node
+              // reuse across reruns — the value comparison always
+              // works even if the guard state somehow got stale,
+              // because a DIFFERENT new Pantone code will always
+              // differ from the last committed one.
               const nativeSetter = Object.getOwnPropertyDescriptor(
                 parentWin.HTMLInputElement.prototype, 'value'
               ).set;
-              let inFlight = false;
 
               const commitValue = (v, refocus) => {{
-                if (inFlight) return;
                 if (!VALID.has(v)) return;
-                inFlight = true;
+                if (inp.__pantoneLastCommitted === v) return;
+                inp.__pantoneLastCommitted = v;
                 try {{
                   nativeSetter.call(inp, v);
                   inp.dispatchEvent(
@@ -536,22 +544,15 @@ with st.sidebar:
                 }} catch (e) {{}}
                 parentWin.__pantoneRefocus = !!refocus;
                 // Let React finish its onChange cycle, then blur so
-                // Streamlit commits the new value to Python. Reset
-                // the inFlight guard on a slight delay — React may
-                // re-use the same <input> DOM node across reruns,
-                // which means this closure (and its `inFlight` var)
-                // persists. Without the reset, the third commit gets
-                // silently swallowed.
+                // Streamlit commits the new value to Python.
                 setTimeout(() => {{
                   try {{ inp.blur(); }} catch (e) {{}}
-                  setTimeout(() => {{ inFlight = false; }}, 50);
                 }}, 0);
               }};
 
               // Exact-match auto-commit while typing — user never has
               // to press Enter.
               inp.addEventListener('input', () => {{
-                if (inFlight) return;
                 const v = (inp.value || "").trim().toUpperCase();
                 if (VALID.has(v)) commitValue(v, true);
               }});
@@ -559,11 +560,22 @@ with st.sidebar:
               // Datalist pick fires 'change'. Commit, keep focus lost
               // (user just clicked, they don't need the cursor back).
               inp.addEventListener('change', () => {{
-                if (inFlight) return;
                 const v = (inp.value || "").trim().toUpperCase();
                 if (VALID.has(v)) commitValue(v, false);
               }});
             }}
+
+            // Every time attach() runs (including on Streamlit reruns
+            // where React reuses the same DOM node), sync the
+            // "last committed" marker to the current Python value.
+            // This way the guard never blocks a legitimate new commit,
+            // even if Python sent back the same value we just wrote.
+            try {{
+              const curVal = (inp.value || "").trim().toUpperCase();
+              if (VALID.has(curVal)) {{
+                inp.__pantoneLastCommitted = curVal;
+              }}
+            }} catch (e) {{}}
 
             // After a self-triggered blur-commit, Streamlit reruns and
             // the input is recreated — put the cursor back at the end
