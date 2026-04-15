@@ -495,15 +495,22 @@ with st.sidebar:
             if (!inp.__pantoneWired) {{
               inp.__pantoneWired = true;
 
-              // Auto select-all on focus so a single click primes the
-              // field for overwrite-on-type.
+              // Single-click → whole value selected → overwrite-on-type.
+              // Strategy: on mouseup, preventDefault (so the browser
+              // does NOT place the cursor where clicked) and then
+              // programmatically select(). Works for both first-click
+              // (fires after focus) and repeat clicks on an already
+              // focused input.
               const selectAll = () => {{
                 try {{ inp.select(); }} catch (e) {{}}
               }};
               inp.addEventListener('focus', () => {{
                 requestAnimationFrame(selectAll);
               }});
-              inp.addEventListener('click', selectAll);
+              inp.addEventListener('mouseup', (e) => {{
+                e.preventDefault();
+                setTimeout(selectAll, 0);
+              }});
 
               // Exact-match auto-commit while typing.
               inp.addEventListener('input', () => {{
