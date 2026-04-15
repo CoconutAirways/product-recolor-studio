@@ -512,26 +512,31 @@ with st.sidebar:
                 setTimeout(selectAll, 0);
               }});
 
-              // Force React (Streamlit's text_input backing store) to
-              // pick up a value that was set programmatically (e.g. by
-              // a native datalist click). Without this, blur commits
-              // the stale React-tracked value.
+              // React/Streamlit tracks the input value via its own
+              // "value tracker" hack. When the browser sets input.value
+              // programmatically (datalist click), React may or may
+              // not notice — we force a clean notification by calling
+              // React's native setter and dispatching a synthetic
+              // input event. Guarded by inFlight to avoid recursion
+              // from our own dispatch re-triggering this handler.
               const nativeSetter = Object.getOwnPropertyDescriptor(
                 parentWin.HTMLInputElement.prototype, 'value'
               ).set;
-              const syncReact = (v) => {{
-                nativeSetter.call(inp, v);
-                inp.dispatchEvent(new Event('input', {{ bubbles: true }}));
-              }};
+              let inFlight = false;
 
-              const commitIfValid = (refocus) => {{
-                const v = (inp.value || "").trim().toUpperCase();
+              const commitValue = (v, refocus) => {{
+                if (inFlight) return;
                 if (!VALID.has(v)) return;
-                // Make sure React sees the current value, then defer
-                // blur() one microtask so React's onChange finishes
-                // before onBlur reads its tracked state.
-                syncReact(v);
+                inFlight = true;
+                try {{
+                  nativeSetter.call(inp, v);
+                  inp.dispatchEvent(
+                    new Event('input', {{ bubbles: true }})
+                  );
+                }} catch (e) {{}}
                 parentWin.__pantoneRefocus = !!refocus;
+                // Let React finish its onChange cycle, then blur so
+                // Streamlit commits the new value to Python.
                 setTimeout(() => {{
                   try {{ inp.blur(); }} catch (e) {{}}
                 }}, 0);
@@ -539,11 +544,19 @@ with st.sidebar:
 
               // Exact-match auto-commit while typing — user never has
               // to press Enter.
-              inp.addEventListener('input', () => commitIfValid(true));
+              inp.addEventListener('input', () => {{
+                if (inFlight) return;
+                const v = (inp.value || "").trim().toUpperCase();
+                if (VALID.has(v)) commitValue(v, true);
+              }});
 
-              // Datalist pick fires 'change' — commit, don't refocus
-              // (user just clicked, they don't expect the cursor back).
-              inp.addEventListener('change', () => commitIfValid(false));
+              // Datalist pick fires 'change'. Commit, keep focus lost
+              // (user just clicked, they don't need the cursor back).
+              inp.addEventListener('change', () => {{
+                if (inFlight) return;
+                const v = (inp.value || "").trim().toUpperCase();
+                if (VALID.has(v)) commitValue(v, false);
+              }});
             }}
 
             // After a self-triggered blur-commit, Streamlit reruns and
