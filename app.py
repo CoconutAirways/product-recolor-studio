@@ -643,22 +643,23 @@ with st.sidebar:
 # UI — Upload (full width)
 # ---------------------------------------------------------------------------
 st.subheader("Upload")
-upload_col, clear_col = st.columns([6, 1])
-with upload_col:
-    upload = st.file_uploader(
-        "Product image (PNG / JPG / WEBP, max ~10 MB)",
-        type=["png", "jpg", "jpeg", "webp"],
-        label_visibility="collapsed",
-        key="product_uploader",
-    )
-with clear_col:
-    if st.session_state.upload_cache is not None:
-        if st.button("✕ Clear", help="Remove the uploaded image", key="clear_upload"):
-            st.session_state.upload_cache = None
-            # Also reset the uploader widget so its thumbnail clears
-            if "product_uploader" in st.session_state:
-                st.session_state.pop("product_uploader", None)
-            st.rerun()
+upload = st.file_uploader(
+    "Product image (PNG / JPG / WEBP, max ~10 MB)",
+    type=["png", "jpg", "jpeg", "webp"],
+    label_visibility="collapsed",
+)
+# Small Clear link rendered under the uploader — only when we have a
+# cached image. Kept outside any columns wrapper so it can't mess with
+# the file_uploader widget's identity across reruns.
+if st.session_state.upload_cache is not None:
+    if st.button(
+        "✕ Clear uploaded image",
+        key="clear_upload",
+        type="secondary",
+        help="Remove the uploaded image",
+    ):
+        st.session_state.upload_cache = None
+        st.rerun()
 
 # ---------------------------------------------------------------------------
 # Upload handling — sticky cache that survives every rerun
@@ -685,11 +686,16 @@ if upload is not None:
                 raw = upload.read()
             except Exception:
                 raw = b""
-        st.session_state.upload_cache = {
-            "id": upload_id,
-            "bytes": raw,
-            "name": upload.name,
-        }
+        # Only overwrite the cache if we actually read real bytes.
+        # Streamlit can occasionally hand us an UploadedFile with an
+        # already-drained buffer after a rerun; an empty read would
+        # clobber a perfectly good cached image and blank the gallery.
+        if raw:
+            st.session_state.upload_cache = {
+                "id": upload_id,
+                "bytes": raw,
+                "name": upload.name,
+            }
 # NOTE: the `else` branch (upload is None) is intentionally absent.
 # Keep the cache alive across transient None states.
 
